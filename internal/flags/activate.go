@@ -29,6 +29,7 @@ func (f *Flags) handleActivateCommand() error {
 	f.amtActivateCommand.BoolVar(&f.SkipIPRenew, "skipIPRenew", false, "skip DHCP renewal of the IP address if AMT becomes enabled")
 	// for local activation in ACM mode need a few more items
 	f.amtActivateCommand.StringVar(&f.configContent, "config", "", "specify a config file or smb: file share URL")
+	f.amtActivateCommand.StringVar(&f.configContent, "configv2", "", "specify a config file or smb: file share URL")
 	f.amtActivateCommand.StringVar(&f.LocalConfig.ACMSettings.AMTPassword, "amtPassword", f.lookupEnvOrString("AMT_PASSWORD", ""), "amt password")
 	f.amtActivateCommand.StringVar(&f.LocalConfig.ACMSettings.ProvisioningCert, "provisioningCert", f.lookupEnvOrString("PROVISIONING_CERT", ""), "provisioning certificate")
 	f.amtActivateCommand.StringVar(&f.LocalConfig.ACMSettings.ProvisioningCertPwd, "provisioningCertPwd", f.lookupEnvOrString("PROVISIONING_CERT_PASSWORD", ""), "provisioning certificate password")
@@ -82,12 +83,17 @@ func (f *Flags) handleActivateCommand() error {
 			fmt.Println("must specify -ccm or -acm, but not both")
 			return utils.InvalidParameterCombination
 		}
-
-		err := f.handleLocalConfig()
-		if err != nil {
-			return utils.FailedReadingConfiguration
+		if f.configContentV2 != "" {
+			err := f.handleLocalConfigV2()
+			if err != nil {
+				return utils.FailedReadingConfiguration
+			}
+		} else {
+			err := f.handleLocalConfig()
+			if err != nil {
+				return utils.FailedReadingConfiguration
+			}
 		}
-
 		if f.LocalConfig.ACMSettings.AMTPassword == "" && f.Password == "" {
 			if rc := f.ReadNewPasswordTo(&f.Password, "New AMT Password"); rc != nil {
 				return rc

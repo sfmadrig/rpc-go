@@ -15,6 +15,7 @@ import (
 	"rpc/internal/amt"
 	"rpc/internal/config"
 	"rpc/internal/smb"
+	pkgConfig "rpc/pkg/config"
 	"rpc/pkg/utils"
 	"strconv"
 	"strings"
@@ -76,8 +77,10 @@ type Flags struct {
 	UseACM                              bool
 	EchoPass                            bool
 	configContent                       string
+	configContentV2                     string
 	UUID                                string
 	LocalConfig                         config.Config
+	LocalConfigV2                       pkgConfig.Configuration
 	amtInfoCommand                      *flag.FlagSet
 	amtActivateCommand                  *flag.FlagSet
 	amtDeactivateCommand                *flag.FlagSet
@@ -344,4 +347,14 @@ func (f *Flags) handleLocalConfig() error {
 		}
 	}
 	return nil
+}
+
+func (f *Flags) handleLocalConfigV2() error {
+	content, err := pkgConfig.ReadAndDecryptFile(f.configContentV2, []byte(""))
+	if err != nil {
+		log.Error("config error: ", err)
+		return err
+	}
+
+	f.LocalConfigV2 = content
 }

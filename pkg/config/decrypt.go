@@ -11,7 +11,7 @@ import (
 )
 
 // Decrypt ciphertext using AES-GCM with the provided key
-func decrypt(cipherText string, key []byte) ([]byte, error) {
+func Decrypt(cipherText string, key []byte) ([]byte, error) {
 	data, err := base64.StdEncoding.DecodeString(cipherText)
 	if err != nil {
 		return nil, err
@@ -41,13 +41,13 @@ func decrypt(cipherText string, key []byte) ([]byte, error) {
 }
 
 // Read encrypted data from file and decrypt it
-func readAndDecryptFile(filePath string, key []byte) (Configuration, error) {
+func ReadAndDecryptFile(filePath string, key []byte) (Configuration, error) {
 	encryptedData, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return Configuration{}, err
 	}
 
-	decryptedData, err := decrypt(string(encryptedData), key)
+	decryptedData, err := Decrypt(string(encryptedData), key)
 	if err != nil {
 		return Configuration{}, err
 	}
