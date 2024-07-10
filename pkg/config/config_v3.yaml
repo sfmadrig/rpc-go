@@ -1,0 +1,52 @@
+id: 20
+name: new Profile
+configuration:
+    remoteManagement:
+        generalSettings:
+            sharedFQDN: false
+            networkInterfaceEnabled: 0
+            pingResponseEnabled: false
+        network:
+            wired:
+                dhcpEnabled: false
+                ipSyncEnabled: false
+                sharedStaticIP: false
+                ipAddress: ""
+                subnetMask: ""
+                defaultGateway: ""
+                primaryDNS: ""
+                secondaryDNS: ""
+                authentication: ""
+            wireless:
+                profiles: []
+        authentication:
+            profiles: []
+        tls:
+            mutualAuthentication: false
+            enabled: false
+            trustedCN: []
+        redirection:
+            enabled: false
+            services:
+                kvm: false
+                sol: false
+                ider: false
+            userConsent: ""
+        userAccounts:
+            userAccounts: []
+    enterpriseAssistant:
+        url: ""
+        username: ""
+        password: ""
+    amtSpecific:
+        controlMode: ccm
+        adminPassword: P@ssw0rd
+        provisioningCert: ""
+        provisioningCertPwd: ""
+        mebxPassword: ""
+    bmcSpecific:
+        adminPassword: ""
+    dashSpecific:
+        adminPassword: ""
+    redfishSpecific:
+        adminPassword: ""
