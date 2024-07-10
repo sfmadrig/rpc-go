@@ -29,7 +29,7 @@ func (f *Flags) handleActivateCommand() error {
 	f.amtActivateCommand.BoolVar(&f.SkipIPRenew, "skipIPRenew", false, "skip DHCP renewal of the IP address if AMT becomes enabled")
 	// for local activation in ACM mode need a few more items
 	f.amtActivateCommand.StringVar(&f.configContent, "config", "", "specify a config file or smb: file share URL")
-	f.amtActivateCommand.StringVar(&f.configContent, "configv2", "", "specify a config file or smb: file share URL")
+	f.amtActivateCommand.StringVar(&f.configContentV2, "configv2", "", "specify a config file or smb: file share URL")
 	f.amtActivateCommand.StringVar(&f.LocalConfig.ACMSettings.AMTPassword, "amtPassword", f.lookupEnvOrString("AMT_PASSWORD", ""), "amt password")
 	f.amtActivateCommand.StringVar(&f.LocalConfig.ACMSettings.ProvisioningCert, "provisioningCert", f.lookupEnvOrString("PROVISIONING_CERT", ""), "provisioning certificate")
 	f.amtActivateCommand.StringVar(&f.LocalConfig.ACMSettings.ProvisioningCertPwd, "provisioningCertPwd", f.lookupEnvOrString("PROVISIONING_CERT_PASSWORD", ""), "provisioning certificate password")

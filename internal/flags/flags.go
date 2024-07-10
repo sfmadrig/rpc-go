@@ -356,5 +356,7 @@ func (f *Flags) handleLocalConfigV2() error {
 		return err
 	}
 
+	fmt.Println(content)
 	f.LocalConfigV2 = content
+	return nil
 }

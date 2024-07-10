@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"io/ioutil"
+	"fmt"
 
 	"gopkg.in/yaml.v2"
 )
@@ -42,16 +43,17 @@ func Decrypt(cipherText string, key []byte) ([]byte, error) {
 
 // Read encrypted data from file and decrypt it
 func ReadAndDecryptFile(filePath string, key []byte) (Configuration, error) {
+	fmt.Println(filePath)
 	encryptedData, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return Configuration{}, err
 	}
-
+	fmt.Println(encryptedData)
 	decryptedData, err := Decrypt(string(encryptedData), key)
 	if err != nil {
 		return Configuration{}, err
 	}
-
+	fmt.Println(decryptedData)
 	var configuration Configuration
 	err = yaml.Unmarshal(decryptedData, &configuration)
 	if err != nil {
