@@ -1,6 +1,8 @@
 module rpc
 
-go 1.20
+go 1.23.0
+
+toolchain go1.23.7
 
 // uncomment if developing with go-wsman-messages locally
 // replace github.com/open-amt-cloud-toolkit/go-wsman-messages/v2 => ../go-wsman-messages
