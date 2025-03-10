@@ -1,6 +1,8 @@
 module rpc
 
-go 1.20
+go 1.23.0
+
+toolchain go1.23.7
 
 // uncomment if developing with go-wsman-messages locally
 // replace github.com/open-amt-cloud-toolkit/go-wsman-messages/v2 => ../go-wsman-messages
@@ -13,7 +15,7 @@ require (
 	github.com/open-amt-cloud-toolkit/go-wsman-messages/v2 v2.20.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.10.0
-	golang.org/x/sys v0.30.0
+	golang.org/x/sys v0.31.0
 )
 
 require (
