@@ -1,3 +1,12 @@
+## [2.43.1](https://github.com/device-management-toolkit/rpc-go/compare/v2.43.0...v2.43.1) (2025-03-11)
+
+
+### Bug Fixes
+
+* license generation ([#777](https://github.com/device-management-toolkit/rpc-go/issues/777)) ([5b914fa](https://github.com/device-management-toolkit/rpc-go/commit/5b914faf758be6d20e5bd65e55511b95b6c08caf))
+* license generation ([#778](https://github.com/device-management-toolkit/rpc-go/issues/778)) ([8ba6993](https://github.com/device-management-toolkit/rpc-go/commit/8ba6993074b9629b55c845f6cd05204a9e078ce9))
+* update go mod ([8a1e741](https://github.com/device-management-toolkit/rpc-go/commit/8a1e7419f905abb6520a1898a2a6e5abbb8aab8a))
+
 # [2.43.0](https://github.com/open-amt-cloud-toolkit/rpc-go/compare/v2.42.8...v2.43.0) (2025-02-10)
 
 
