@@ -1,3 +1,10 @@
+## [2.45.1](https://github.com/device-management-toolkit/rpc-go/compare/v2.45.0...v2.45.1) (2025-03-25)
+
+
+### Bug Fixes
+
+* prevent partial unprovision in CCM (only allow in ACM) ([afb7112](https://github.com/device-management-toolkit/rpc-go/commit/afb71120d2adceba8d910041c0d66ccd1b683727))
+
 # [2.45.0](https://github.com/device-management-toolkit/rpc-go/compare/v2.44.0...v2.45.0) (2025-03-24)
 
 
