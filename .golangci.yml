@@ -108,7 +108,7 @@ linters:
     # - unparam
     # - unused
     # - wsl
-    # - whitespace
+    - whitespace
 
 # disable:
 #    - exhaustivestruct
