@@ -56,7 +56,7 @@ var ieee8021xCfgEAPTLS = config.Ieee8021xConfig{
 	ProfileName:            "ieee8021xCfgEAPTLS",
 	Username:               "username",
 	Password:               "",
-	AuthenticationProtocol: int(ieee8021x.AuthenticationProtocolEAPTLS),
+	AuthenticationProtocol: ieee8021x.AuthenticationProtocolEAPTLS,
 	ClientCert:             "clientCert",
 	CACert:                 "caCert",
 	PrivateKey:             "privateKey",

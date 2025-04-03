@@ -171,7 +171,7 @@ func (service *ProvisioningService) DisplayAMTInfo() (err error) {
 		}
 
 		dataStruct["controlMode"] = utils.InterpretControlMode(result)
-		service.PrintOutput("Control Mode		: " + string(utils.InterpretControlMode(result)))
+		service.PrintOutput("Control Mode		: " + utils.InterpretControlMode(result))
 	}
 
 	if service.flags.AmtInfo.OpState {
@@ -209,7 +209,7 @@ func (service *ProvisioningService) DisplayAMTInfo() (err error) {
 		}
 
 		dataStruct["dnsSuffix"] = result
-		service.PrintOutput("DNS Suffix		: " + string(result))
+		service.PrintOutput("DNS Suffix		: " + result)
 
 		result, err = cmd.GetOSDNSSuffix()
 		if err != nil {
@@ -227,7 +227,7 @@ func (service *ProvisioningService) DisplayAMTInfo() (err error) {
 		}
 
 		dataStruct["hostnameOS"] = result
-		service.PrintOutput("Hostname (OS)		: " + string(result))
+		service.PrintOutput("Hostname (OS)		: " + result)
 	}
 
 	if service.flags.AmtInfo.Ras {
