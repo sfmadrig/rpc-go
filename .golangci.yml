@@ -1,0 +1,94 @@
+version: "2"
+linters:
+  default: none
+  enable:
+    - asciicheck
+    - bodyclose
+    - dogsled
+    - durationcheck
+    - exhaustive
+    - misspell
+    - whitespace
+    - wsl
+  settings:
+    cyclop:
+      max-complexity: 15
+    errcheck:
+      check-type-assertions: true
+      check-blank: false
+    errorlint:
+      errorf: true
+    exhaustive:
+      default-signifies-exhaustive: false
+    funlen:
+      lines: 100
+      statements: 45
+    gocognit:
+      min-complexity: 16
+    goconst:
+      min-len: 2
+      min-occurrences: 2
+    gocritic:
+      disabled-checks:
+        - dupImport
+        - unnecessaryBlock
+        - hugeParam
+      enabled-tags:
+        - diagnostic
+        - experimental
+        - opinionated
+        - performance
+        - style
+    gocyclo:
+      min-complexity: 15
+    misspell:
+      locale: US
+    mnd:
+      checks:
+        - argument
+        - case
+        - condition
+        - operation
+        - return
+    nestif:
+      min-complexity: 5
+    nolintlint:
+      require-explanation: true
+      require-specific: true
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - godot
+          - paralleltest
+        path: integration-test
+      - linters:
+          - godot
+        path: internal/controller/http
+      - linters:
+          - err113
+          - funlen
+        path: (.+)_test.go
+    paths:
+      - docs
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gci
+  settings:
+    gofumpt:
+      extra-rules: true
+  exclusions:
+    generated: lax
+    paths:
+      - docs
+      - third_party$
+      - builtin$
+      - examples$

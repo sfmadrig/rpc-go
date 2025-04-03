@@ -8,12 +8,12 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"rpc/internal/amt"
-	"rpc/internal/flags"
-	"rpc/pkg/utils"
 	"testing"
 	"time"
 
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/amt"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/flags"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -81,7 +81,6 @@ func (c MockAMT) InitiateLMS() {}
 func init() {
 	p = Payload{}
 	p.AMT = MockAMT{}
-
 }
 func TestCreatePayload(t *testing.T) {
 	mebxDNSSuffix = "mebxdns"
@@ -152,10 +151,12 @@ func TestCreateActivationRequestWithPasswordShouldNotPrompt(t *testing.T) {
 	defer func() {
 		controlMode = 0
 	}()
+
 	result, err := p.CreateMessageRequest(flags)
 	msgPayload, decodeErr := base64.StdEncoding.DecodeString(result.Payload)
 	payload := MessagePayload{}
 	jsonErr := json.Unmarshal(msgPayload, &payload)
+
 	assert.NoError(t, err)
 	assert.NoError(t, decodeErr)
 	assert.NoError(t, jsonErr)
@@ -204,6 +205,7 @@ func TestCreateMessageRequestIPConfiguration(t *testing.T) {
 	assert.NotEmpty(t, result.Payload)
 	decodedBytes, decodeErr := base64.StdEncoding.DecodeString(result.Payload)
 	assert.NoError(t, decodeErr)
+
 	msgPayload := MessagePayload{}
 	jsonErr := json.Unmarshal(decodedBytes, &msgPayload)
 	assert.NoError(t, jsonErr)
@@ -219,6 +221,7 @@ func TestCreateMessageRequestCustomUUID(t *testing.T) {
 	assert.NotEmpty(t, result.Payload)
 	decodedBytes, decodeErr := base64.StdEncoding.DecodeString(result.Payload)
 	assert.NoError(t, decodeErr)
+
 	msgPayload := MessagePayload{}
 	jsonErr := json.Unmarshal(decodedBytes, &msgPayload)
 	assert.NoError(t, jsonErr)
@@ -227,12 +230,14 @@ func TestCreateMessageRequestCustomUUID(t *testing.T) {
 
 func TestCreateMessageRequestNoUUID(t *testing.T) {
 	const expectedUUID = "123-456-789"
+
 	flags := flags.Flags{}
 	result, createErr := p.CreateMessageRequest(flags)
 	assert.NoError(t, createErr)
 	assert.NotEmpty(t, result.Payload)
 	decodedBytes, decodeErr := base64.StdEncoding.DecodeString(result.Payload)
 	assert.NoError(t, decodeErr)
+
 	msgPayload := MessagePayload{}
 	jsonErr := json.Unmarshal(decodedBytes, &msgPayload)
 	assert.NoError(t, jsonErr)
@@ -251,6 +256,7 @@ func TestCreateMessageRequestHostnameInfo(t *testing.T) {
 	assert.NotEmpty(t, result.Payload)
 	decodedBytes, decodeErr := base64.StdEncoding.DecodeString(result.Payload)
 	assert.NoError(t, decodeErr)
+
 	msgPayload := MessagePayload{}
 	jsonErr := json.Unmarshal(decodedBytes, &msgPayload)
 	assert.NoError(t, jsonErr)
@@ -267,6 +273,7 @@ func TestCreateMessageRequestFriendlyName(t *testing.T) {
 	assert.NotEmpty(t, result.Payload)
 	decodedBytes, decodeErr := base64.StdEncoding.DecodeString(result.Payload)
 	assert.NoError(t, decodeErr)
+
 	var m map[string]interface{}
 	unmarshalErr := json.Unmarshal(decodedBytes, &m)
 	assert.NoError(t, unmarshalErr)
@@ -279,9 +286,11 @@ func TestCreateMessageRequestWithoutFriendlyName(t *testing.T) {
 	assert.NotEmpty(t, result.Payload)
 	decodedBytes, decodeErr := base64.StdEncoding.DecodeString(result.Payload)
 	assert.NoError(t, decodeErr)
+
 	var m map[string]interface{}
 	unmarshalErr := json.Unmarshal(decodedBytes, &m)
 	assert.NoError(t, unmarshalErr)
+
 	_, isInMap := m["friendlyName"]
 	assert.False(t, isInMap)
 }

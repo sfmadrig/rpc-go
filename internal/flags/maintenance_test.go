@@ -8,10 +8,10 @@ package flags
 import (
 	"os"
 	"path/filepath"
-	"rpc/pkg/utils"
 	"strings"
 	"testing"
 
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -202,9 +202,11 @@ func TestParseFlagsMaintenance(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			args := strings.Fields(tc.cmdLine)
 			flags := NewFlags(args, MockPRSuccess)
+
 			if tc.passwordFail {
 				flags = NewFlags(args, MockPRFail)
 			}
+
 			flags.AmtCommand.PTHI = MockPTHICommands{}
 			flags.netEnumerator = testNetEnumerator
 			gotResult := flags.ParseFlags()

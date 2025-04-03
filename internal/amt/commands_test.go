@@ -7,11 +7,11 @@ package amt
 import (
 	"errors"
 	"fmt"
-	"rpc/pkg/pthi"
-	"rpc/pkg/utils"
 	"testing"
 	"time"
 
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/pkg/pthi"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -161,12 +161,14 @@ func TestInitializeMEIError(t *testing.T) {
 	flag = true
 	err := amt.Initialize()
 	assert.Error(t, err, utils.HECIDriverNotDetected)
+
 	flag = false
 }
 func TestInitializeError(t *testing.T) {
 	flag1 = true
 	err := amt.Initialize()
 	assert.Error(t, err, utils.HECIDriverNotDetected)
+
 	flag1 = false
 }
 func TestGetVersionDataFromME(t *testing.T) {
@@ -203,6 +205,7 @@ func TestGetIsAMTEnabledError(t *testing.T) {
 	result, err := amt.GetChangeEnabled()
 	assert.Error(t, err)
 	assert.False(t, result.IsAMTEnabled())
+
 	flag1 = false
 }
 
@@ -219,18 +222,21 @@ func TestAmtOperationalState(t *testing.T) {
 		flag1 = true
 		err := amt.EnableAMT()
 		assert.Error(t, err)
+
 		flag1 = false
 	})
 	t.Run("setAmtOperationalState expect error setting op state", func(t *testing.T) {
 		SetOperationsStateError = errors.New("test error")
 		err := amt.EnableAMT()
 		assert.Error(t, err)
+
 		SetOperationsStateError = nil
 	})
 	t.Run("setAmtOperationalState expect error on bad return status", func(t *testing.T) {
 		SetOperationsStateStatus = pthi.Status(5)
 		err := amt.EnableAMT()
 		assert.Error(t, err)
+
 		SetOperationsStateStatus = pthi.Status(0)
 	})
 }

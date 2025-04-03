@@ -7,11 +7,12 @@ package local
 
 import (
 	"net/url"
-	internalAMT "rpc/internal/amt"
-	"rpc/internal/config"
-	"rpc/internal/flags"
-	"rpc/internal/local/amt"
-	"rpc/pkg/utils"
+
+	internalAMT "github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/amt"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/config"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/flags"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/local/amt"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/pkg/utils"
 )
 
 type OSNetworker interface {
@@ -36,6 +37,7 @@ func NewProvisioningService(flags *flags.Flags) ProvisioningService {
 		Host:   utils.LMSAddress + ":" + utils.LMSPort,
 		Path:   "/wsman",
 	}
+
 	return ProvisioningService{
 		flags:                  flags,
 		serverURL:              serverURL,
@@ -45,12 +47,13 @@ func NewProvisioningService(flags *flags.Flags) ProvisioningService {
 		networker:              &RealOSNetworker{},
 		interfacedWsmanMessage: amt.NewGoWSMANMessages(flags.LMSAddress),
 	}
-
 }
 
 func ExecuteCommand(flags *flags.Flags) error {
 	var err error
+
 	service := NewProvisioningService(flags)
+
 	switch flags.Command {
 	case utils.CommandActivate:
 		err = service.Activate()
@@ -63,8 +66,10 @@ func ExecuteCommand(flags *flags.Flags) error {
 	case utils.CommandVersion:
 		err = service.DisplayVersion()
 	}
+
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

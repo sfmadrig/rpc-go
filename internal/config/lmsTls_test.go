@@ -13,10 +13,10 @@ import (
 	"io/fs"
 	"math/big"
 	"os"
-	"rpc/internal/certs"
 	"testing"
 	"time"
 
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/certs"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
@@ -182,15 +182,18 @@ func (m *mockFileSystem) ReadDir(name string) ([]fs.DirEntry, error) {
 	for _, file := range m.certFiles {
 		entries = append(entries, mockDirEntry{name: file})
 	}
+
 	return entries, nil
 }
 
 func (m *mockFileSystem) ReadFile(name string) ([]byte, error) {
 	// Return certificate data using the full path as the key
 	log.Info("mockFileSystem ReadFile: ", name)
+
 	if data, exists := m.certData[name]; exists {
 		return data, nil
 	}
+
 	return nil, errors.New("file not found: " + name)
 }
 
@@ -290,6 +293,7 @@ func TestVerifyFullChain(t *testing.T) {
 			if tt.expectError && err == nil {
 				t.Errorf("%s: Expected error but got none", tt.name)
 			}
+
 			if !tt.expectError && err != nil {
 				t.Errorf("%s: Unexpected error: %v", tt.name, err)
 			}

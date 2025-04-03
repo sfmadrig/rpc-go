@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"rpc/internal/config"
-	"rpc/internal/flags"
-	"rpc/pkg/utils"
 	"strings"
 	"testing"
 
 	"github.com/open-amt-cloud-toolkit/go-wsman-messages/v2/pkg/wsman/amt/ethernetport"
 	"github.com/open-amt-cloud-toolkit/go-wsman-messages/v2/pkg/wsman/amt/publickey"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/config"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/flags"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -342,7 +342,9 @@ func TestAddCertsUsingEnterpriseAssistant(t *testing.T) {
 			service.config.EnterpriseAssistant.EAAddress = server.URL
 			service.config.EnterpriseAssistant.EAUsername = "user"
 			service.config.EnterpriseAssistant.EAPassword = "pass"
+
 			var handles Handles
+
 			handles, _, err := service.AddCertsUsingEnterpriseAssistant(Ieee8021xConfigs[0])
 			if tt.expectError != nil {
 				assert.Error(t, err)

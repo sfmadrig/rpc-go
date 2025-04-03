@@ -10,9 +10,6 @@ import (
 	"encoding/xml"
 	"errors"
 	"net/http"
-	amt2 "rpc/internal/amt"
-	"rpc/internal/flags"
-	"rpc/pkg/utils"
 	"testing"
 	"time"
 
@@ -35,6 +32,9 @@ import (
 	"github.com/open-amt-cloud-toolkit/go-wsman-messages/v2/pkg/wsman/ips/hostbasedsetup"
 	"github.com/open-amt-cloud-toolkit/go-wsman-messages/v2/pkg/wsman/ips/ieee8021x"
 	"github.com/open-amt-cloud-toolkit/go-wsman-messages/v2/pkg/wsman/ips/optin"
+	amt2 "github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/amt"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/flags"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -764,6 +764,7 @@ func setupService(f *flags.Flags) ProvisioningService {
 	service.amtCommand = MockAMT{}
 	service.networker = &MockOSNetworker{}
 	service.interfacedWsmanMessage = MockWSMAN{}
+
 	return service
 }
 

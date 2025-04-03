@@ -12,14 +12,13 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"rpc/internal/config"
-	"rpc/pkg/utils"
 	"strings"
 
+	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/open-amt-cloud-toolkit/go-wsman-messages/v2/pkg/wsman/cim/wifi"
 	"github.com/open-amt-cloud-toolkit/go-wsman-messages/v2/pkg/wsman/ips/ieee8021x"
-
-	"github.com/ilyakaznacheev/cleanenv"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/config"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/pkg/utils"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -56,7 +55,9 @@ func TLSModesToString() string {
 
 func ParseTLSMode(s string) (TLSMode, error) {
 	var m TLSMode
+
 	var err error
+
 	switch s {
 	case "Server":
 		m = TLSModeServer
@@ -72,6 +73,7 @@ func ParseTLSMode(s string) (TLSMode, error) {
 		// flags error handling already shows appropriate message
 		err = errors.New("")
 	}
+
 	return m, err
 }
 
@@ -128,6 +130,7 @@ func (f *Flags) printConfigurationUsage() string {
 	usage += "                  Example: " + baseCommand + " " + utils.SubCommandChangeAMTPassword + " -password YourAMTPassword -newamtpassword YourNewPassword\n"
 	usage += "\nRun '" + baseCommand + " COMMAND -h' for more information on a command.\n"
 	fmt.Println(usage)
+
 	return usage
 }
 
@@ -143,11 +146,13 @@ func (f *Flags) handleConfigureCommand() error {
 	switch f.SubCommand {
 	case utils.SubCommandAddEthernetSettings:
 		log.Info("Sub command \"wiredsettings\" is deprecated use \"wired\" instead")
+
 		err = f.handleAddEthernetSettings()
 	case utils.SubCommandWired:
 		err = f.handleAddEthernetSettings()
 	case utils.SubCommandAddWifiSettings:
 		log.Info("Sub command \"addwifisettings\" is deprecated use \"wireless\" instead")
+
 		err = f.handleAddWifiSettings()
 	case utils.SubCommandWireless:
 		err = f.handleAddWifiSettings()
@@ -165,8 +170,10 @@ func (f *Flags) handleConfigureCommand() error {
 		err = f.handleSetAMTFeatures()
 	default:
 		f.printConfigurationUsage()
+
 		err = utils.IncorrectCommandLineParameters
 	}
+
 	if err != nil {
 		return err
 	}
@@ -180,6 +187,7 @@ func (f *Flags) handleConfigureCommand() error {
 				if err = f.ReadPasswordFromUser(); err != nil {
 					return utils.MissingOrIncorrectPassword
 				}
+
 				f.LocalConfig.Password = f.Password
 			}
 		} else {
@@ -191,6 +199,7 @@ func (f *Flags) handleConfigureCommand() error {
 			}
 		}
 	}
+
 	return nil
 }
 
@@ -231,10 +240,12 @@ func (f *Flags) handleSyncClock() error {
 
 func (f *Flags) handleSetAMTFeatures() error {
 	var err error
+
 	if len(f.commandLineArgs) == 3 {
 		f.printConfigurationUsage()
 		return utils.IncorrectCommandLineParameters
 	}
+
 	f.flagSetAMTFeatures.BoolVar(&f.Verbose, "v", false, "Verbose output")
 	f.flagSetAMTFeatures.StringVar(&f.LogLevel, "l", "info", "Log level (panic,fatal,error,warn,info,debug,trace)")
 	f.flagSetAMTFeatures.BoolVar(&f.JsonOutput, "json", false, "JSON output")
@@ -263,6 +274,7 @@ func (f *Flags) handleSetAMTFeatures() error {
 		if f.LocalConfigV2.Configuration.Redirection.UserConsent != "" {
 			f.UserConsent = f.LocalConfigV2.Configuration.Redirection.UserConsent
 		}
+
 		f.KVM = f.LocalConfigV2.Configuration.Redirection.Services.KVM
 		f.SOL = f.LocalConfigV2.Configuration.Redirection.Services.SOL
 		f.IDER = f.LocalConfigV2.Configuration.Redirection.Services.IDER
@@ -278,6 +290,7 @@ func (f *Flags) handleSetAMTFeatures() error {
 		default:
 			f.printConfigurationUsage()
 			log.Error("invalid value for userconsent: ", f.UserConsent)
+
 			return utils.IncorrectCommandLineParameters
 		}
 	}
@@ -335,6 +348,7 @@ func (f *Flags) handleEnableWifiPort() error {
 		f.printConfigurationUsage()
 		return utils.IncorrectCommandLineParameters
 	}
+
 	f.flagSetEnableWifiPort.BoolVar(&f.Verbose, "v", false, "Verbose output")
 	f.flagSetEnableWifiPort.StringVar(&f.LogLevel, "l", "info", "Log level (panic,fatal,error,warn,info,debug,trace)")
 	f.flagSetEnableWifiPort.BoolVar(&f.JsonOutput, "json", false, "JSON output")
@@ -344,6 +358,7 @@ func (f *Flags) handleEnableWifiPort() error {
 		f.printConfigurationUsage()
 		return utils.IncorrectCommandLineParameters
 	}
+
 	return nil
 }
 
@@ -354,6 +369,7 @@ func (f *Flags) NewConfigureFlagSet(subCommand string) *flag.FlagSet {
 	fs.StringVar(&f.LogLevel, "l", "info", "Log level (panic,fatal,error,warn,info,debug,trace)")
 	fs.BoolVar(&f.JsonOutput, "json", false, "JSON output")
 	fs.StringVar(&f.Password, "password", f.lookupEnvOrString("AMT_PASSWORD", ""), "AMT password")
+
 	return fs
 }
 
@@ -363,6 +379,7 @@ func (f *Flags) handleConfigureTLS() error {
 	fs.Func("mode", tlsModeUsage, func(flagValue string) error {
 		var e error
 		f.ConfigTLSInfo.TLSMode, e = ParseTLSMode(flagValue)
+
 		return e
 	})
 
@@ -380,12 +397,15 @@ func (f *Flags) handleConfigureTLS() error {
 		fs.Usage()
 		return utils.IncorrectCommandLineParameters
 	}
+
 	if err := fs.Parse(f.commandLineArgs[3:]); err != nil {
 		return utils.IncorrectCommandLineParameters
 	}
+
 	if len(fs.Args()) > 0 {
 		fmt.Printf("unhandled additional args: %v\n", fs.Args())
 		fs.Usage()
+
 		return utils.IncorrectCommandLineParameters
 	}
 
@@ -394,6 +414,7 @@ func (f *Flags) handleConfigureTLS() error {
 		if err != nil {
 			return utils.FailedReadingConfiguration
 		}
+
 		f.LocalConfig.Password = f.LocalConfigV2.Configuration.AMTSpecific.AdminPassword
 		mutualAuth := f.LocalConfigV2.Configuration.TLS.MutualAuthentication
 		enabled := f.LocalConfigV2.Configuration.TLS.Enabled
@@ -405,7 +426,6 @@ func (f *Flags) handleConfigureTLS() error {
 		f.ConfigTLSInfo.EAAddress = f.LocalConfigV2.Configuration.EnterpriseAssistant.URL
 		f.ConfigTLSInfo.EAUsername = f.LocalConfigV2.Configuration.EnterpriseAssistant.Username
 		f.ConfigTLSInfo.EAPassword = f.LocalConfigV2.Configuration.EnterpriseAssistant.Password
-
 	}
 
 	if f.configContent != "" {
@@ -413,12 +433,14 @@ func (f *Flags) handleConfigureTLS() error {
 		if err != nil {
 			return utils.FailedReadingConfiguration
 		}
+
 		f.ConfigTLSInfo.TLSMode, _ = ParseTLSMode(f.LocalConfig.TlsConfig.Mode)
 		f.ConfigTLSInfo.DelayInSeconds = f.LocalConfig.TlsConfig.Delay
 		f.ConfigTLSInfo.EAAddress = f.LocalConfig.EnterpriseAssistant.EAAddress
 		f.ConfigTLSInfo.EAUsername = f.LocalConfig.EnterpriseAssistant.EAUsername
 		f.ConfigTLSInfo.EAPassword = f.LocalConfig.EnterpriseAssistant.EAPassword
 	}
+
 	if f.ConfigTLSInfo.EAAddress != "" && f.ConfigTLSInfo.EAUsername != "" {
 		if f.ConfigTLSInfo.EAPassword == "" {
 			err := f.PromptUserInput("Please enter EA password: ", &f.ConfigTLSInfo.EAPassword)
@@ -426,6 +448,7 @@ func (f *Flags) handleConfigureTLS() error {
 				return err
 			}
 		}
+
 		f.LocalConfig.EnterpriseAssistant.EAConfigured = true
 	}
 
@@ -451,7 +474,9 @@ func (f *Flags) DetermineTLSMode(mutualAuth, enabled, allowNonTLS bool) string {
 
 func (f *Flags) handleAddEthernetSettings() error {
 	var configJson string
+
 	var secretsFilePath string
+
 	var secretConfig config.SecretConfig
 
 	// V2 features
@@ -538,7 +563,6 @@ func (f *Flags) handleAddEthernetSettings() error {
 				f.LocalConfig.EnterpriseAssistant.EAConfigured = true
 			}
 		}
-
 	}
 
 	if f.configContent != "" || configJson != "" {
@@ -546,6 +570,7 @@ func (f *Flags) handleAddEthernetSettings() error {
 		if err != nil {
 			return utils.FailedReadingConfiguration
 		}
+
 		if configJson != "" {
 			err := json.Unmarshal([]byte(configJson), &f.LocalConfig)
 			if err != nil {
@@ -583,12 +608,15 @@ func (f *Flags) handleAddEthernetSettings() error {
 		if f.LocalConfig.WiredConfig.IpAddress == "" {
 			return utils.MissingOrIncorrectStaticIP
 		}
+
 		if f.LocalConfig.WiredConfig.Subnetmask == "" {
 			return utils.MissingOrIncorrectNetworkMask
 		}
+
 		if f.LocalConfig.WiredConfig.Gateway == "" {
 			return utils.MissingOrIncorrectGateway
 		}
+
 		if f.LocalConfig.WiredConfig.PrimaryDNS == "" {
 			return utils.MissingOrIncorrectPrimaryDNS
 		}
@@ -606,11 +634,11 @@ func (f *Flags) handleAddEthernetSettings() error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
 func (f *Flags) verifyWiredIeee8021xConfig(secretConfig config.SecretConfig) error {
-
 	// Check if the 802.1x profile name is set
 	if f.LocalConfig.WiredConfig.Ieee8021xProfileName == "" {
 		return nil
@@ -622,10 +650,12 @@ func (f *Flags) verifyWiredIeee8021xConfig(secretConfig config.SecretConfig) err
 				return err
 			}
 		}
+
 		f.LocalConfig.EnterpriseAssistant.EAConfigured = true
 	}
 	// Find and validate the 802.1x config
 	var wired8021xConfig *config.Ieee8021xConfig
+
 	for i, item := range f.LocalConfig.Ieee8021xConfigs {
 		if item.ProfileName == f.LocalConfig.WiredConfig.Ieee8021xProfileName {
 			wired8021xConfig = &f.LocalConfig.Ieee8021xConfigs[i]
@@ -663,13 +693,17 @@ func (f *Flags) verifyWiredIeee8021xConfig(secretConfig config.SecretConfig) err
 	if err := f.verifyMatchingIeee8021xConfig(wired8021xConfig.ProfileName); err != nil {
 		return err
 	}
+
 	return nil
 }
 
 func (f *Flags) handleAddWifiSettings() error {
 	var err error
+
 	var secretsFilePath string
+
 	var wifiSecretConfig config.SecretConfig
+
 	var configJson string
 
 	// V2 features
@@ -706,7 +740,7 @@ func (f *Flags) handleAddWifiSettings() error {
 	f.flagSetAddWifiSettings.StringVar(&eaSettings.EAUsername, "eaUsername", "", "Enterprise Assistant username")
 	f.flagSetAddWifiSettings.StringVar(&eaSettings.EAPassword, "eaPassword", "", "Enterprise Assistant password")
 
-	// rpc configure wireless is not enough paramaters, need -config or a combination of command line flags
+	// rpc configure wireless is not enough parameters, need -config or a combination of command line flags
 	if len(f.commandLineArgs[3:]) == 0 {
 		f.printConfigurationUsage()
 		return utils.IncorrectCommandLineParameters
@@ -738,6 +772,7 @@ func (f *Flags) handleAddWifiSettings() error {
 		f.LocalConfig.WifiConfigs = []config.WifiConfig{}
 		f.LocalConfig.Ieee8021xConfigs = []config.Ieee8021xConfig{}
 		f.LocalConfig.EnterpriseAssistant = config.EnterpriseAssistant{EAConfigured: false}
+
 		err := f.handleLocalConfigV2()
 		if err != nil {
 			return utils.FailedReadingConfiguration
@@ -780,6 +815,7 @@ func (f *Flags) handleAddWifiSettings() error {
 					PrivateKey:             wifiCfg.IEEE8021x.PrivateKey,
 				}
 				newWifiConfig.Ieee8021xProfileName = newWifiConfig.ProfileName
+
 				f.LocalConfig.Ieee8021xConfigs = append(f.LocalConfig.Ieee8021xConfigs, ieee8021xConfig)
 
 				if !f.LocalConfig.EnterpriseAssistant.EAConfigured {
@@ -792,12 +828,12 @@ func (f *Flags) handleAddWifiSettings() error {
 
 			f.LocalConfig.WifiConfigs = append(f.LocalConfig.WifiConfigs, newWifiConfig)
 		}
-
 	} else {
 		err = f.handleLocalConfig()
 		if err != nil {
 			return utils.FailedReadingConfiguration
 		}
+
 		if configJson != "" {
 			err := json.Unmarshal([]byte(configJson), &f.LocalConfig)
 			if err != nil {
@@ -836,6 +872,7 @@ func (f *Flags) handleAddWifiSettings() error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -845,6 +882,7 @@ func (f *Flags) getAuthenticationCode(s string) (int, error) {
 			return int(code), nil
 		}
 	}
+
 	return 0, utils.MissingOrInvalidConfiguration
 }
 
@@ -854,6 +892,7 @@ func (f *Flags) getEncrytionCode(s string) (int, error) {
 			return int(code), nil
 		}
 	}
+
 	return 0, utils.MissingOrInvalidConfiguration
 }
 
@@ -862,6 +901,7 @@ func (f *Flags) mergeWifiSecrets(wifiSecretConfig config.SecretConfig) error {
 		if secret.ProfileName == "" {
 			continue
 		}
+
 		if secret.PskPassphrase != "" {
 			for i := range f.LocalConfig.WifiConfigs {
 				item := &f.LocalConfig.WifiConfigs[i]
@@ -870,6 +910,7 @@ func (f *Flags) mergeWifiSecrets(wifiSecretConfig config.SecretConfig) error {
 				}
 			}
 		}
+
 		if secret.Password != "" {
 			for i := range f.LocalConfig.Ieee8021xConfigs {
 				item := &f.LocalConfig.Ieee8021xConfigs[i]
@@ -878,6 +919,7 @@ func (f *Flags) mergeWifiSecrets(wifiSecretConfig config.SecretConfig) error {
 				}
 			}
 		}
+
 		if secret.PrivateKey != "" {
 			for i := range f.LocalConfig.Ieee8021xConfigs {
 				item := &f.LocalConfig.Ieee8021xConfigs[i]
@@ -887,6 +929,7 @@ func (f *Flags) mergeWifiSecrets(wifiSecretConfig config.SecretConfig) error {
 			}
 		}
 	}
+
 	return nil
 }
 
@@ -896,6 +939,7 @@ func (f *Flags) promptForSecrets() error {
 		if item.ProfileName == "" {
 			continue
 		}
+
 		authMethod := wifi.AuthenticationMethod(item.AuthenticationMethod)
 		if (authMethod == wifi.AuthenticationMethodWPAPSK || authMethod == wifi.AuthenticationMethodWPA2PSK) &&
 			item.PskPassphrase == "" {
@@ -913,7 +957,9 @@ func (f *Flags) promptForSecrets() error {
 				return err
 			}
 		}
+
 		f.LocalConfig.EnterpriseAssistant.EAConfigured = true
+
 		return nil
 	}
 	// If EA settings are not provided, look for secrets in the secrets/config file
@@ -922,12 +968,14 @@ func (f *Flags) promptForSecrets() error {
 		if item.ProfileName == "" {
 			continue
 		}
+
 		if item.AuthenticationProtocol == ieee8021x.AuthenticationProtocolPEAPv0_EAPMSCHAPv2 && item.Password == "" {
 			err := f.PromptUserInput("Please enter password for "+item.ProfileName+": ", &item.Password)
 			if err != nil {
 				return err
 			}
 		}
+
 		if item.AuthenticationProtocol == ieee8021x.AuthenticationProtocolEAPTLS && item.PrivateKey == "" {
 			err := f.PromptUserInput("Please enter private key for "+item.ProfileName+": ", &item.PrivateKey)
 			if err != nil {
@@ -935,11 +983,13 @@ func (f *Flags) promptForSecrets() error {
 			}
 		}
 	}
+
 	return nil
 }
 
 func (f *Flags) verifyWifiConfigurations() error {
 	priorities := make(map[int]bool)
+
 	for _, cfg := range f.LocalConfig.WifiConfigs {
 		//Check profile name is not empty
 		if cfg.ProfileName == "" {
@@ -961,6 +1011,7 @@ func (f *Flags) verifyWifiConfigurations() error {
 			log.Error("priority was specified previously: ", cfg.ProfileName)
 			return utils.MissingOrInvalidConfiguration
 		}
+
 		priorities[cfg.Priority] = true
 
 		authenticationMethod := wifi.AuthenticationMethod(cfg.AuthenticationMethod)
@@ -979,10 +1030,12 @@ func (f *Flags) verifyWifiConfigurations() error {
 				log.Error("missing ieee8021x profile name")
 				return utils.MissingOrInvalidConfiguration
 			}
+
 			if cfg.PskPassphrase != "" {
 				log.Errorf("wifi configuration for 8021x contains passphrase: %s", cfg.ProfileName)
 				return utils.MissingOrInvalidConfiguration
 			}
+
 			err := f.verifyMatchingIeee8021xConfig(cfg.Ieee8021xProfileName)
 			if err != nil {
 				return err
@@ -1028,41 +1081,50 @@ func (f *Flags) verifyWifiConfigurations() error {
 			return utils.MissingOrInvalidConfiguration
 		}
 	}
+
 	return nil
 }
 
 func (f *Flags) verifyMatchingIeee8021xConfig(profileName string) error {
 	foundOne := false
+
 	for _, ieee802xCfg := range f.LocalConfig.Ieee8021xConfigs {
 		if profileName != ieee802xCfg.ProfileName {
 			continue
 		}
+
 		if foundOne {
 			log.Error("duplicate IEEE8021x Profile names: ", ieee802xCfg.ProfileName)
 
 			return utils.MissingOrInvalidConfiguration
 		}
+
 		foundOne = true
+
 		err := f.verifyIeee8021xConfig(ieee802xCfg)
 		if err != nil {
 			return utils.MissingOrInvalidConfiguration
 		}
 	}
+
 	if !foundOne {
 		log.Error("missing IEEE8021x Profile: ", profileName)
 		return utils.MissingOrInvalidConfiguration
 	}
+
 	return nil
 }
 
 func (f *Flags) verifyIeee8021xConfig(cfg config.Ieee8021xConfig) error {
 	var err error = utils.MissingOrInvalidConfiguration
+
 	isEAConfigured := f.LocalConfig.EnterpriseAssistant.EAConfigured
 	if !isEAConfigured {
 		if cfg.Username == "" {
 			log.Error("missing username for config: ", cfg.ProfileName)
 			return err
 		}
+
 		if cfg.CACert == "" {
 			log.Error("missing caCert for config: ", cfg.ProfileName)
 			return err
@@ -1076,6 +1138,7 @@ func (f *Flags) verifyIeee8021xConfig(cfg config.Ieee8021xConfig) error {
 				log.Error("missing clientCert for config: ", cfg.ProfileName)
 				return err
 			}
+
 			if cfg.PrivateKey == "" {
 				log.Error("missing privateKey for config: ", cfg.ProfileName)
 				return err

@@ -56,15 +56,18 @@ func (service *ProvisioningService) PerformPostRequest(url string, requestBody [
 	}
 
 	request.Header.Set("Content-Type", "application/json")
+
 	if token != "" {
 		request.Header.Set("Authorization", "Bearer "+token)
 	}
 
 	client := &http.Client{}
+
 	response, err := client.Do(request)
 	if err != nil {
 		return nil, fmt.Errorf("sending request: %v", err)
 	}
+
 	defer response.Body.Close()
 
 	responseBody, err := ioutil.ReadAll(response.Body)
@@ -78,7 +81,7 @@ func (service *ProvisioningService) PerformPostRequest(url string, requestBody [
 func (service *ProvisioningService) GetAuthToken(url string, credentials AuthRequest) (string, error) {
 	requestBody, err := json.Marshal(credentials)
 	if err != nil {
-		return "", fmt.Errorf("marshalling credentials: %v", err)
+		return "", fmt.Errorf("marshaling credentials: %v", err)
 	}
 
 	responseBody, err := service.PerformPostRequest(url, requestBody, "")
@@ -97,7 +100,7 @@ func (service *ProvisioningService) GetAuthToken(url string, credentials AuthReq
 func (service *ProvisioningService) EAConfigureRequest(url string, token string, profileRequest EAProfile) (EAProfile, error) {
 	requestBody, err := json.Marshal(profileRequest)
 	if err != nil {
-		return EAProfile{}, fmt.Errorf("marshalling profile request: %v", err)
+		return EAProfile{}, fmt.Errorf("marshaling profile request: %v", err)
 	}
 
 	responseBody, err := service.PerformPostRequest(url, requestBody, token)

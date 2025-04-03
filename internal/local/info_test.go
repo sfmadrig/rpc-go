@@ -8,11 +8,11 @@ package local
 import (
 	"errors"
 	"net"
-	"rpc/internal/flags"
-	"rpc/pkg/utils"
 	"testing"
 
 	"github.com/open-amt-cloud-toolkit/go-wsman-messages/v2/pkg/wsman/amt/publickey"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/flags"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -100,6 +100,7 @@ func TestDisplayAMTInfo(t *testing.T) {
 		err := lps.DisplayAMTInfo()
 		assert.NoError(t, err)
 		assert.Equal(t, nil, err)
+
 		f.JsonOutput = false
 
 		mockUUIDErr = nil
@@ -120,6 +121,7 @@ func TestDisplayAMTInfo(t *testing.T) {
 		err := lps.DisplayAMTInfo()
 		assert.Equal(t, nil, err)
 		assert.False(t, f.AmtInfo.UserCert)
+
 		mockControlModeErr = nil
 	})
 	t.Run("resets UserCert when control mode is preprovisioning", func(t *testing.T) {
@@ -131,6 +133,7 @@ func TestDisplayAMTInfo(t *testing.T) {
 		err := lps.DisplayAMTInfo()
 		assert.Equal(t, nil, err)
 		assert.False(t, f.AmtInfo.UserCert)
+
 		mockControlMode = orig
 	})
 	t.Run("returns MissingOrIncorrectPassword on no password input from user", func(t *testing.T) {
@@ -142,6 +145,7 @@ func TestDisplayAMTInfo(t *testing.T) {
 		err := lps.DisplayAMTInfo()
 		assert.Equal(t, utils.MissingOrIncorrectPassword, err)
 		assert.True(t, f.AmtInfo.UserCert)
+
 		mockControlMode = orig
 	})
 }

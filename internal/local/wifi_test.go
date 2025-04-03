@@ -10,16 +10,15 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
-	"rpc/internal/config"
-	"rpc/internal/flags"
-	"rpc/pkg/utils"
 	"strings"
 	"testing"
 
 	"github.com/open-amt-cloud-toolkit/go-wsman-messages/v2/pkg/wsman/amt/publickey"
 	"github.com/open-amt-cloud-toolkit/go-wsman-messages/v2/pkg/wsman/cim/wifi"
 	"github.com/open-amt-cloud-toolkit/go-wsman-messages/v2/pkg/wsman/ips/ieee8021x"
-
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/config"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/flags"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -79,6 +78,7 @@ func TestAddWifiSettings(t *testing.T) {
 		lps := setupService(f)
 		err := lps.AddWifiSettings()
 		assert.Error(t, err)
+
 		errEnableWiFi = nil
 	})
 }
@@ -114,6 +114,7 @@ func TestProcessWifiConfig(t *testing.T) {
 		errGetPublicPrivateKeyPairs = nil
 		err := lps.ProcessWifiConfig(&wifiCfgWPA8021xEAPTLS)
 		assert.NoError(t, err)
+
 		wifiCfgWPA8021xEAPTLS.AuthenticationMethod = orig
 	})
 	t.Run("expect success when handling non-ieee8021x config", func(t *testing.T) {
@@ -125,6 +126,7 @@ func TestProcessWifiConfig(t *testing.T) {
 
 func TestEnableWifiErrors(t *testing.T) {
 	f := &flags.Flags{}
+
 	t.Run("expect success for EnableWifi", func(t *testing.T) {
 		lps := setupService(f)
 		err := lps.EnableWifiPort(false)
@@ -135,9 +137,9 @@ func TestEnableWifiErrors(t *testing.T) {
 		lps := setupService(f)
 		err := lps.EnableWifiPort(true)
 		assert.Error(t, err)
+
 		errEnableWiFi = nil
 	})
-
 }
 
 func TestSetIeee8021xConfigWithEA(t *testing.T) {
@@ -202,6 +204,7 @@ func TestSetIeee8021xConfigWithEA(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			service, _, mockWsman := setupProvisioningService()
 			tt.setupMocks(mockWsman)
+
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				if strings.HasPrefix(r.URL.Path, "/api/authenticate/") {
 					if tt.mockauthError {

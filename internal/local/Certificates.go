@@ -2,13 +2,13 @@ package local
 
 import (
 	"reflect"
-	"rpc/pkg/utils"
 	"strings"
 
 	"github.com/open-amt-cloud-toolkit/go-wsman-messages/v2/pkg/wsman/amt/publickey"
 	"github.com/open-amt-cloud-toolkit/go-wsman-messages/v2/pkg/wsman/amt/publicprivate"
 	"github.com/open-amt-cloud-toolkit/go-wsman-messages/v2/pkg/wsman/cim/concrete"
 	"github.com/open-amt-cloud-toolkit/go-wsman-messages/v2/pkg/wsman/cim/credential"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/pkg/utils"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -65,6 +65,7 @@ func (service *ProvisioningService) PruneCerts() error {
 			}
 		}
 	}
+
 	return nil
 }
 
@@ -231,16 +232,20 @@ func (service *ProvisioningService) GetPrivateKeyHandle(securitySettings Securit
 			if key.DERKey == privateKey {
 				privateKeyHandle = key.InstanceID
 				service.handlesWithCerts[privateKeyHandle] = privateKey //TODO: remove if not necessary
+
 				return privateKeyHandle, nil
 			}
 		}
+
 		if privateKeyHandle == "" {
 			return "", utils.GenericFailure
 		}
 	} else if err != nil {
 		return "", err
 	}
+
 	service.handlesWithCerts[privateKeyHandle] = privateKey //TODO: remove if not necessary
+
 	return privateKeyHandle, nil
 }
 
@@ -252,16 +257,20 @@ func (service *ProvisioningService) GetClientCertHandle(securitySettings Securit
 			if !cert.TrustedRootCertificate && cert.X509Certificate == clientCert {
 				clientCertHandle = cert.InstanceID
 				service.handlesWithCerts[clientCertHandle] = clientCert //TODO: remove if not necessary
+
 				return clientCertHandle, nil
 			}
 		}
+
 		if clientCertHandle == "" {
 			return "", utils.GenericFailure
 		}
 	} else if err != nil {
 		return "", err
 	}
+
 	service.handlesWithCerts[clientCertHandle] = clientCert //TODO: remove if not necessary
+
 	return clientCertHandle, err
 }
 
@@ -273,15 +282,19 @@ func (service *ProvisioningService) GetTrustedRootCertHandle(securitySettings Se
 			if cert.TrustedRootCertificate && cert.X509Certificate == caCert {
 				rootCertHandle = cert.InstanceID
 				service.handlesWithCerts[rootCertHandle] = caCert //TODO: remove if not necessary
+
 				return rootCertHandle, nil
 			}
 		}
+
 		if rootCertHandle == "" {
 			return "", utils.GenericFailure
 		}
 	} else if err != nil {
 		return "", err
 	}
+
 	service.handlesWithCerts[rootCertHandle] = caCert //TODO: remove if not necessary
+
 	return rootCertHandle, nil
 }

@@ -6,7 +6,7 @@
 package flags
 
 import (
-	"rpc/pkg/utils"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/pkg/utils"
 )
 
 func (f *Flags) handleVersionCommand() error {
@@ -15,5 +15,6 @@ func (f *Flags) handleVersionCommand() error {
 	}
 	// runs locally
 	f.Local = true
+
 	return nil
 }

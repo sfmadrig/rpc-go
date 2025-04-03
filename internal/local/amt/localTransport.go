@@ -11,9 +11,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"rpc/internal/lm"
 	"sync"
 
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/lm"
 	"github.com/sirupsen/logrus"
 )
 
@@ -93,7 +93,6 @@ Loop:
 				break Loop
 			}
 		}
-
 	}
 
 	response, err := http.ReadResponse(responseReader, r)
@@ -124,6 +123,7 @@ func serializeHTTPRequest(r *http.Request) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		length := fmt.Sprintf("%x", len(bodyBytes))
 		bodyBytes = append([]byte(length+"\r\n"), bodyBytes...)
 		bodyBytes = append(bodyBytes, []byte("\r\n0\r\n\r\n")...)

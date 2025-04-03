@@ -6,12 +6,12 @@ package main
 
 import (
 	"os"
-	"rpc/internal/amt"
-	"rpc/internal/flags"
-	"rpc/internal/local"
-	"rpc/internal/rps"
-	"rpc/pkg/utils"
 
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/amt"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/flags"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/local"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/rps"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/pkg/utils"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -22,10 +22,12 @@ const AccessErrMsg = "Failed to execute due to access issues. " +
 
 func checkAccess() error {
 	amtCommand := amt.NewAMTCommand()
+
 	err := amtCommand.Initialize()
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -39,11 +41,13 @@ func runRPC(args []string) error {
 	if err != nil {
 		return err
 	}
+
 	if flags.Local {
 		err = local.ExecuteCommand(flags)
 	} else {
 		err = rps.ExecuteCommand(flags)
 	}
+
 	return err
 }
 
@@ -74,6 +78,7 @@ func parseCommandLine(args []string) (*flags.Flags, error) {
 			FullTimestamp: true,
 		})
 	}
+
 	return flags, error
 }
 
@@ -94,6 +99,7 @@ func updateConnectionSettings(flags *flags.Flags) error {
 	// Check if TLS is Mandatory for LMS connection
 	resp, err := flags.AmtCommand.GetChangeEnabled()
 	flags.LocalTlsEnforced = false
+
 	if err != nil {
 		if err.Error() == "wait timeout while sending data" {
 			log.Trace("Operation timed out while sending data. This may occur on systems with AMT version 11 and below.")
@@ -103,8 +109,10 @@ func updateConnectionSettings(flags *flags.Flags) error {
 			return err
 		}
 	}
+
 	if resp.IsTlsEnforcedOnLocalPorts() {
 		flags.LocalTlsEnforced = true
+
 		log.Trace("TLS is enforced on local ports")
 	}
 	// Check the current provisioning mode
@@ -112,14 +120,15 @@ func updateConnectionSettings(flags *flags.Flags) error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
-
 func handleErrorAndExit(err error) {
 	if customErr, ok := err.(utils.CustomError); ok {
 		if err != utils.HelpRequested {
 			log.Error(customErr.Error())
 		}
+
 		os.Exit(customErr.Code)
 	} else {
 		log.Error(err.Error())

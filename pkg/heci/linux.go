@@ -44,6 +44,7 @@ func NewDriver() *Driver {
 
 func (heci *Driver) Init(useLME bool, useWD bool) error {
 	var err error
+
 	heci.meiDevice, err = os.OpenFile(Device, syscall.O_RDWR, 0)
 	if err != nil {
 		if err.Error() == "open /dev/mei0: permission denied" {
@@ -53,6 +54,7 @@ func (heci *Driver) Init(useLME bool, useWD bool) error {
 		} else {
 			log.Error("Cannot open MEI Device")
 		}
+
 		return err
 	}
 
@@ -72,10 +74,13 @@ func (heci *Driver) Init(useLME bool, useWD bool) error {
 			break
 		}
 	}
+
 	if err != nil {
 		return err
 	}
+
 	t := MEIConnectClientData{}
+
 	err = binary.Read(bytes.NewBuffer(data.data[:]), binary.LittleEndian, &t)
 	if err != nil {
 		return err
@@ -90,7 +95,6 @@ func (heci *Driver) GetBufferSize() uint32 {
 	return heci.bufferSize
 }
 func (heci *Driver) SendMessage(buffer []byte, done *uint32) (bytesWritten uint32, err error) {
-
 	size, err := syscall.Write(int(heci.meiDevice.Fd()), buffer)
 	if err != nil {
 		return 0, err
@@ -99,11 +103,11 @@ func (heci *Driver) SendMessage(buffer []byte, done *uint32) (bytesWritten uint3
 	return uint32(size), nil
 }
 func (heci *Driver) ReceiveMessage(buffer []byte, done *uint32) (bytesRead uint32, err error) {
-
 	read, err := unix.Read(int(heci.meiDevice.Fd()), buffer)
 	if err != nil {
 		return 0, err
 	}
+
 	return uint32(read), nil
 }
 
@@ -112,6 +116,7 @@ func Ioctl(fd, op, arg uintptr) error {
 	if ep != 0 {
 		return syscall.Errno(ep)
 	}
+
 	return nil
 }
 

@@ -9,18 +9,22 @@
 package local
 
 import (
-	log "github.com/sirupsen/logrus"
 	"os/exec"
-	"rpc/pkg/utils"
+
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/pkg/utils"
+	log "github.com/sirupsen/logrus"
 )
 
 func (n *RealOSNetworker) RenewDHCPLease() error {
 	log.Debug("renewing DHCP lease")
+
 	cmd := exec.Command("dhclient")
+
 	err := cmd.Run()
 	if err != nil {
 		log.Error("Error renewing DHCP lease:", err)
 		return utils.NetworkConfigurationFailed
 	}
+
 	return nil
 }

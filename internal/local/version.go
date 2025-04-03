@@ -8,8 +8,9 @@ package local
 import (
 	"encoding/json"
 	"fmt"
-	"rpc/pkg/utils"
 	"strings"
+
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/pkg/utils"
 )
 
 type VersionInfo struct {
@@ -25,10 +26,12 @@ func (service *ProvisioningService) DisplayVersion() (err error) {
 			Version:  utils.ProjectVersion,
 			Protocol: utils.ProtocolVersion,
 		}
+
 		outBytes, err := json.MarshalIndent(info, "", "  ")
 		if err != nil {
 			return err
 		}
+
 		println(string(outBytes))
 	} else {
 		fmt.Println(strings.ToUpper(utils.ProjectName))

@@ -14,9 +14,9 @@ import (
 	"encoding/csv"
 	"io"
 	"os"
-	"rpc/pkg/utils"
 	"strings"
 
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/pkg/utils"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -26,12 +26,13 @@ func rpcCheckAccess() int {
 	if err != nil {
 		return handleError(err)
 	}
+
 	return int(utils.Success)
 }
 
 //export rpcExec
 func rpcExec(Input *C.char, Output **C.char) int {
-	// Save the current stdout and redirect temporarly
+	// Save the current stdout and redirect temporarily
 	oldStdout := os.Stdout
 	rd, w, _ := os.Pipe()
 	os.Stdout = w
@@ -46,12 +47,15 @@ func rpcExec(Input *C.char, Output **C.char) int {
 	// Split string
 	r := csv.NewReader(strings.NewReader(inputString))
 	r.Comma = ' ' // space
+
 	args, err := r.Read()
 	if err != nil {
 		log.Error(err.Error())
 		return utils.InvalidParameterCombination.Code
 	}
+
 	args = append([]string{"rpc"}, args...)
+
 	err = runRPC(args)
 	if err != nil {
 		*Output = C.CString("rpcExec failed: " + inputString)
@@ -60,9 +64,13 @@ func rpcExec(Input *C.char, Output **C.char) int {
 
 	// Save captured output to Output variable and restore stdout
 	w.Close()
+
 	var buf bytes.Buffer
+
 	io.Copy(&buf, rd)
+
 	os.Stdout = oldStdout
+
 	*Output = C.CString(buf.String())
 
 	return int(utils.Success)

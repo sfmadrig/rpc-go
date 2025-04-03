@@ -7,11 +7,11 @@ package flags
 
 import (
 	"os"
-	"rpc/pkg/utils"
 	"strings"
 	"testing"
 	"time"
 
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,7 +24,9 @@ func TestHandleActivateCommandNoFlags(t *testing.T) {
 func TestHandleActivateCommand(t *testing.T) {
 	args := []string{"./rpc", "activate", "-u", "wss://localhost", "-profile", "profileName", "-password", "Password"}
 	flags := NewFlags(args, MockPRSuccess)
+
 	var AMTTimeoutDuration time.Duration = 120000000000
+
 	rc := flags.ParseFlags()
 	assert.Equal(t, nil, rc)
 	assert.Equal(t, "wss://localhost", flags.URL)
@@ -41,7 +43,9 @@ func TestHandleActivateCommand(t *testing.T) {
 func TestHandleActivateCommandWithTimeOut(t *testing.T) {
 	args := []string{"./rpc", "activate", "-u", "wss://localhost", "-profile", "profileName", "-password", "Password", "-t", "2s"}
 	flags := NewFlags(args, MockPRSuccess)
+
 	var AMTTimeoutDuration time.Duration = 2000000000
+
 	rc := flags.ParseFlags()
 	assert.Equal(t, nil, rc)
 	assert.Equal(t, "wss://localhost", flags.URL)
@@ -74,16 +78,18 @@ func TestHandleActivateCommandWithFriendlyName(t *testing.T) {
 	assert.Equal(t, "friendlyName", flags.FriendlyName)
 }
 func TestHandleActivateCommandWithENV(t *testing.T) {
-
 	if err := os.Setenv("DNS_SUFFIX", "envdnssuffix.com"); err != nil {
 		t.Error(err)
 	}
+
 	if err := os.Setenv("HOSTNAME", "envhostname"); err != nil {
 		t.Error(err)
 	}
+
 	if err := os.Setenv("PROFILE", "envprofile"); err != nil {
 		t.Error(err)
 	}
+
 	if err := os.Setenv("AMT_PASSWORD", "envpassword"); err != nil {
 		t.Error(err)
 	}
@@ -200,7 +206,6 @@ func TestHandleActivateCommandNoURL(t *testing.T) {
 }
 
 func TestHandleActivateCommandLocal(t *testing.T) {
-
 	tests := map[string]struct {
 		cmdLine      string
 		wantResult   error
@@ -252,13 +257,14 @@ func TestHandleActivateCommandLocal(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			args := strings.Fields(tc.cmdLine)
 			flags := NewFlags(args, MockPRSuccess)
+
 			if tc.passwordFail {
 				flags = NewFlags(args, MockPRFail)
 			}
+
 			gotResult := flags.ParseFlags()
 			assert.Equal(t, tc.wantResult, gotResult)
 			assert.Equal(t, utils.CommandActivate, flags.Command)
 		})
 	}
-
 }

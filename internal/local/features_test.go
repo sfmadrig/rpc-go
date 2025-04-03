@@ -5,13 +5,13 @@
 package local
 
 import (
-	"rpc/internal/flags"
-	"rpc/pkg/utils"
 	"testing"
 
 	"github.com/open-amt-cloud-toolkit/go-wsman-messages/v2/pkg/wsman/amt/redirection"
 	"github.com/open-amt-cloud-toolkit/go-wsman-messages/v2/pkg/wsman/cim/kvm"
 	"github.com/open-amt-cloud-toolkit/go-wsman-messages/v2/pkg/wsman/ips/optin"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/flags"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -207,6 +207,7 @@ func TestSetAMTFeatures(t *testing.T) {
 			service.amtCommand = mockAMT
 			service.interfacedWsmanMessage = mockWsman
 			tc.setupMocks(mockWsman)
+
 			err := service.SetAMTFeatures()
 			if tc.expectedError != nil {
 				assert.Equal(t, tc.expectedError, err)

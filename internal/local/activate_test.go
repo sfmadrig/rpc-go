@@ -7,12 +7,12 @@ package local
 
 import (
 	"crypto/x509"
-	amt2 "rpc/internal/amt"
-	"rpc/internal/certs"
-	"rpc/internal/flags"
-	"rpc/pkg/utils"
 	"testing"
 
+	amt2 "github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/amt"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/certs"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/internal/flags"
+	"github.com/open-amt-cloud-toolkit/rpc-go/v2/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,6 +23,7 @@ func getTestCerts() *certs.CompositeChain {
 		cc, _ := certs.NewCompositeChain("P@ssw0rd")
 		sortaSingletonCerts = &cc
 	}
+
 	return sortaSingletonCerts
 }
 
@@ -40,6 +41,7 @@ func TestActivation(t *testing.T) {
 		lps.flags.ControlMode = 1
 		err := lps.Activate()
 		assert.Error(t, err)
+
 		lps.flags.ControlMode = 0
 	})
 
@@ -47,19 +49,21 @@ func TestActivation(t *testing.T) {
 		mockLocalSystemAccountErr = errTestError
 		err := lps.Activate()
 		assert.Error(t, err)
+
 		mockLocalSystemAccountErr = nil
 	})
-
 }
 
 func TestActivateCCM(t *testing.T) {
 	lps := setupService(&flags.Flags{})
 	lps.flags.Command = utils.CommandActivate
 	lps.flags.LocalConfig.Password = "P@ssw0rd"
+
 	t.Run("returns ActivationFailed on GetGeneralSettings error", func(t *testing.T) {
 		errMockGeneralSettings = errTestError
 		err := lps.ActivateCCM()
 		assert.Error(t, err)
+
 		errMockGeneralSettings = nil
 	})
 
@@ -67,6 +71,7 @@ func TestActivateCCM(t *testing.T) {
 		errHostBasedSetupService = errTestError
 		err := lps.ActivateCCM()
 		assert.Error(t, err)
+
 		errHostBasedSetupService = nil
 	})
 
@@ -114,6 +119,7 @@ func TestInjectCertsErrors(t *testing.T) {
 		lps := setupService(f)
 		err := lps.injectCertificate(certs)
 		assert.Error(t, err)
+
 		errAddNextCertInChain = nil
 	})
 }
@@ -122,6 +128,7 @@ func TestDumpPfx(t *testing.T) {
 	certsAndKeys := CertsAndKeys{}
 	_, _, err := dumpPfx(certsAndKeys)
 	assert.NotNil(t, err)
+
 	certsAndKeys.certs = []*x509.Certificate{{}}
 	_, _, err = dumpPfx(certsAndKeys)
 	assert.NotNil(t, err)
