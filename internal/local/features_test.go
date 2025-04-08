@@ -150,6 +150,7 @@ func TestSetAMTFeatures(t *testing.T) {
 				IDER:        true,
 				UserConsent: "none",
 				Password:    "P@ssw0rd",
+				ControlMode: 2,
 			},
 			setupMocks: func(mock *MockWSMAN) {
 				mockGetRedirectionServiceResponse = getRedirectionResponse
@@ -168,6 +169,7 @@ func TestSetAMTFeatures(t *testing.T) {
 				IDER:        true,
 				UserConsent: "none",
 				Password:    "P@ssw0rd",
+				ControlMode: 2,
 			},
 			setupMocks: func(mock *MockWSMAN) {
 				mockGetRedirectionServiceResponse = getRedirectionResponse

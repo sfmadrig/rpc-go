@@ -55,12 +55,6 @@ func (service *ProvisioningService) Configure() (err error) {
 	case utils.SubCommandChangeAMTPassword:
 		return service.ChangeAMTPassword()
 	case utils.SubCommandSetAMTFeatures:
-		if service.flags.ControlMode != 2 {
-			log.Error("Device needs to be in admin control mode to configure AMT features.")
-
-			return utils.UnableToConfigure
-		}
-
 		return service.SetAMTFeatures()
 	default:
 	}

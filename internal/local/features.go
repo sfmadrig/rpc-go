@@ -68,58 +68,67 @@ func (service *ProvisioningService) SetAMTFeatures() error {
 		return utils.AMTFeaturesConfigurationFailed
 	}
 
-	//Get OptInService
-	getOptInServiceResponse, err := service.interfacedWsmanMessage.GetIpsOptInService()
-	if err != nil {
-		log.Error("Error while getting the OptIn Service: ", err)
-
-		return utils.AMTFeaturesConfigurationFailed
-	}
-
-	optInRequired := getOptInServiceResponse.Body.GetAndPutResponse.OptInRequired
-
-	switch service.flags.UserConsent {
-	case "none":
-		optInRequired = uint32(optin.OptInRequiredNone)
-	case "kvm":
-		optInRequired = uint32(optin.OptInRequiredKVM)
-	case "all":
-		optInRequired = uint32(optin.OptInRequiredAll)
-	}
-
-	if getOptInServiceResponse.Body.GetAndPutResponse.OptInRequired != optInRequired {
-		//Put OptInService
-		request := optin.OptInServiceRequest{
-			CanModifyOptInPolicy:    getOptInServiceResponse.Body.GetAndPutResponse.CanModifyOptInPolicy,
-			CreationClassName:       getOptInServiceResponse.Body.GetAndPutResponse.CreationClassName,
-			ElementName:             getOptInServiceResponse.Body.GetAndPutResponse.ElementName,
-			Name:                    getOptInServiceResponse.Body.GetAndPutResponse.Name,
-			OptInCodeTimeout:        getOptInServiceResponse.Body.GetAndPutResponse.OptInCodeTimeout,
-			OptInDisplayTimeout:     getOptInServiceResponse.Body.GetAndPutResponse.OptInDisplayTimeout,
-			OptInRequired:           int(optInRequired),
-			OptInState:              getOptInServiceResponse.Body.GetAndPutResponse.OptInState,
-			SystemCreationClassName: getOptInServiceResponse.Body.GetAndPutResponse.SystemCreationClassName,
-			SystemName:              getOptInServiceResponse.Body.GetAndPutResponse.SystemName,
-		}
-
-		_, err := service.interfacedWsmanMessage.PutIpsOptInService(request)
+	if service.flags.ControlMode == 2 {
+		//Get OptInService
+		getOptInServiceResponse, err := service.interfacedWsmanMessage.GetIpsOptInService()
 		if err != nil {
-			log.Error("Error while putting the OptIn Service: ", err)
+			log.Error("Error while getting the OptIn Service: ", err)
 
 			return utils.AMTFeaturesConfigurationFailed
+		}
+
+		optInRequired := getOptInServiceResponse.Body.GetAndPutResponse.OptInRequired
+
+		switch service.flags.UserConsent {
+		case "none":
+			optInRequired = uint32(optin.OptInRequiredNone)
+		case "kvm":
+			optInRequired = uint32(optin.OptInRequiredKVM)
+		case "all":
+			optInRequired = uint32(optin.OptInRequiredAll)
+		}
+
+		if getOptInServiceResponse.Body.GetAndPutResponse.OptInRequired != optInRequired {
+			//Put OptInService
+			request := optin.OptInServiceRequest{
+				CanModifyOptInPolicy:    getOptInServiceResponse.Body.GetAndPutResponse.CanModifyOptInPolicy,
+				CreationClassName:       getOptInServiceResponse.Body.GetAndPutResponse.CreationClassName,
+				ElementName:             getOptInServiceResponse.Body.GetAndPutResponse.ElementName,
+				Name:                    getOptInServiceResponse.Body.GetAndPutResponse.Name,
+				OptInCodeTimeout:        getOptInServiceResponse.Body.GetAndPutResponse.OptInCodeTimeout,
+				OptInDisplayTimeout:     getOptInServiceResponse.Body.GetAndPutResponse.OptInDisplayTimeout,
+				OptInRequired:           int(optInRequired),
+				OptInState:              getOptInServiceResponse.Body.GetAndPutResponse.OptInState,
+				SystemCreationClassName: getOptInServiceResponse.Body.GetAndPutResponse.SystemCreationClassName,
+				SystemName:              getOptInServiceResponse.Body.GetAndPutResponse.SystemName,
+			}
+
+			_, err := service.interfacedWsmanMessage.PutIpsOptInService(request)
+			if err != nil {
+				log.Error("Error while putting the OptIn Service: ", err)
+
+				return utils.AMTFeaturesConfigurationFailed
+			}
 		}
 	}
 
 	// Get the AMT Features
-	println("AMT Features configured successfully")
-
-	if !isISMSystem {
-		println("KVM Enabled		:", service.flags.KVM)
+	if isISMSystem {
+		log.Warn("KVM feature is not supported on ISM systems.")
+	} else {
+		log.Info("KVM: ", service.flags.KVM)
 	}
 
-	println("SOL Enabled		:", service.flags.SOL)
-	println("IDER Enabled		:", service.flags.IDER)
-	println("User Consent		:", service.flags.UserConsent)
+	log.Info("SOL: ", service.flags.SOL)
+	log.Info("IDER: ", service.flags.IDER)
+
+	if service.flags.ControlMode != 2 && service.flags.UserConsent != "all" {
+		log.Warn("User consent is read-only and set to ALL by default in CCM.")
+	} else {
+		log.Info("User Consent: ", service.flags.UserConsent)
+	}
+
+	log.Info("AMT Features configured successfully")
 
 	return nil
 }

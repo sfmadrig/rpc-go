@@ -185,25 +185,24 @@ func (f *Flags) handleConfigureCommand() error {
 	}
 
 	f.Local = true
-	if f.SubCommand != utils.SubCommandSetAMTFeatures {
-		if f.Password == "" {
-			if f.LocalConfig.Password != "" {
-				f.Password = f.LocalConfig.Password
-			} else {
-				if err = f.ReadPasswordFromUser(); err != nil {
-					return utils.MissingOrIncorrectPassword
-				}
 
-				f.LocalConfig.Password = f.Password
-			}
+	if f.Password == "" {
+		if f.LocalConfig.Password != "" {
+			f.Password = f.LocalConfig.Password
 		} else {
-			if f.LocalConfig.Password == "" {
-				f.LocalConfig.Password = f.Password
-			} else if f.LocalConfig.Password != f.Password {
-				log.Error("password does not match config file password")
-
+			if err = f.ReadPasswordFromUser(); err != nil {
 				return utils.MissingOrIncorrectPassword
 			}
+
+			f.LocalConfig.Password = f.Password
+		}
+	} else {
+		if f.LocalConfig.Password == "" {
+			f.LocalConfig.Password = f.Password
+		} else if f.LocalConfig.Password != f.Password {
+			log.Error("password does not match config file password")
+
+			return utils.MissingOrIncorrectPassword
 		}
 	}
 
