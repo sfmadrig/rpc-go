@@ -1,3 +1,10 @@
+# [2.46.0](https://github.com/device-management-toolkit/rpc-go/compare/v2.45.1...v2.46.0) (2025-04-09)
+
+
+### Features
+
+* enable local cira configuration ([6d0d648](https://github.com/device-management-toolkit/rpc-go/commit/6d0d648749300c5074bc627adbef07c505f35e98))
+
 ## [2.45.1](https://github.com/device-management-toolkit/rpc-go/compare/v2.45.0...v2.45.1) (2025-03-25)
 
 
