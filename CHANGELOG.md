@@ -1,3 +1,10 @@
+## [2.46.1](https://github.com/device-management-toolkit/rpc-go/compare/v2.46.0...v2.46.1) (2025-04-09)
+
+
+### Bug Fixes
+
+* updates CCM AMT features except user consent ([53b5ade](https://github.com/device-management-toolkit/rpc-go/commit/53b5ade262e2899fa5ef0c531a9fa4fb45911fa2))
+
 # [2.46.0](https://github.com/device-management-toolkit/rpc-go/compare/v2.45.1...v2.46.0) (2025-04-09)
 
 
