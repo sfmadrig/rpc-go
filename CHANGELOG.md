@@ -1,3 +1,10 @@
+## [2.47.1](https://github.com/device-management-toolkit/rpc-go/compare/v2.47.0...v2.47.1) (2025-05-16)
+
+
+### Bug Fixes
+
+* add commit for ccm SHBC ([fc184d3](https://github.com/device-management-toolkit/rpc-go/commit/fc184d32848d646579253e5262b1f1469b122602))
+
 # [2.47.0](https://github.com/device-management-toolkit/rpc-go/compare/v2.46.1...v2.47.0) (2025-05-15)
 
 
