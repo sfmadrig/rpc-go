@@ -137,18 +137,32 @@ func (f *Flags) handleLocalConfigV1() error {
 		return utils.FailedReadingConfiguration
 	}
 
-	if f.LocalConfig.CCMSettings.AMTPassword != "" && f.UseCCM {
-		f.LocalConfig.Password = f.LocalConfig.CCMSettings.AMTPassword
-		f.Password = f.LocalConfig.Password
-	} else if f.LocalConfig.ACMSettings.AMTPassword != "" && f.UseACM {
-		f.LocalConfig.Password = f.LocalConfig.ACMSettings.AMTPassword
-		f.Password = f.LocalConfig.Password
-	} else if f.Password == "" {
+	if f.Password != "" {
+		// Set all password fields to command line password
+		f.LocalConfig.CCMSettings.AMTPassword = f.Password
+		f.LocalConfig.Password = f.Password
+	}
+
+	// Use CCM settings password if CCM mode is active
+	if f.UseCCM && f.LocalConfig.CCMSettings.AMTPassword != "" {
+		f.Password = f.LocalConfig.CCMSettings.AMTPassword
+		f.LocalConfig.Password = f.Password
+	}
+
+	// Use ACM settings password if ACM mode is active
+	if f.UseACM && f.LocalConfig.ACMSettings.AMTPassword != "" {
+		f.Password = f.LocalConfig.ACMSettings.AMTPassword
+		f.LocalConfig.Password = f.Password
+	}
+
+	if f.LocalConfig.Password == "" {
 		if rc := f.ReadNewPasswordTo(&f.Password, "New AMT Password"); rc != nil {
 			return rc
 		}
 
 		f.LocalConfig.Password = f.Password
+		f.LocalConfig.ACMSettings.AMTPassword = f.Password
+		f.LocalConfig.CCMSettings.AMTPassword = f.Password
 	}
 
 	if f.UseACM {
@@ -194,8 +208,15 @@ func (f *Flags) ValidateConfigV2() error {
 		}
 	}
 
-	f.LocalConfig.ACMSettings.AMTPassword = f.LocalConfigV2.Configuration.AMTSpecific.AdminPassword
-	f.LocalConfig.Password = f.LocalConfigV2.Configuration.AMTSpecific.AdminPassword
+	// Use command line password if provided, otherwise use config password
+	pwd := f.LocalConfigV2.Configuration.AMTSpecific.AdminPassword
+	if f.Password != "" {
+		pwd = f.Password
+	}
+
+	// Set both password fields
+	f.LocalConfig.ACMSettings.AMTPassword = pwd
+	f.LocalConfig.Password = pwd
 
 	if f.UseACM {
 		// Check if the Provisioning Certificate is set

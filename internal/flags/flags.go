@@ -128,6 +128,7 @@ func NewFlags(args []string, pr utils.PasswordReader) *Flags {
 	flags.passwordReader = pr
 	flags.commandLineArgs = args
 	flags.amtInfoCommand = flag.NewFlagSet(utils.CommandAMTInfo, flag.ContinueOnError)
+	flags.amtInfoCommand.BoolVar(&flags.SkipCertCheck, "n", false, "Skip server certificate verification")
 	flags.amtInfoCommand.BoolVar(&flags.JsonOutput, "json", false, "json output")
 
 	flags.amtActivateCommand = flag.NewFlagSet(utils.CommandActivate, flag.ContinueOnError)

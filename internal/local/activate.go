@@ -66,31 +66,36 @@ func (service *ProvisioningService) Activate() error {
 	tlsConfig := &tls.Config{}
 
 	if service.flags.LocalTlsEnforced {
-		acmConfig := service.config.ACMSettings
+		if service.flags.UseACM {
+			acmConfig := service.config.ACMSettings
 
-		certsAndKeys, err := convertPfxToObject(acmConfig.ProvisioningCert, acmConfig.ProvisioningCertPwd)
-		if err != nil {
-			return err
-		}
-		// Use the AMT Certificate response to verify AMT device
-		startHBasedResponse, err := service.StartSecureHostBasedConfiguration(certsAndKeys)
-		if err != nil {
-			return err
-		}
+			certsAndKeys, err := convertPfxToObject(acmConfig.ProvisioningCert, acmConfig.ProvisioningCertPwd)
+			if err != nil {
+				return err
+			}
+			// Use the AMT Certificate response to verify AMT device
+			startHBasedResponse, err := service.StartSecureHostBasedConfiguration(certsAndKeys)
+			if err != nil {
+				return err
+			}
 
-		tlsConfig = config.GetTLSConfig(&service.flags.ControlMode, &startHBasedResponse, service.flags.SkipCertCheck)
+			tlsConfig = config.GetTLSConfig(&service.flags.ControlMode, &startHBasedResponse, service.flags.SkipCertCheck)
 
-		tlsCert := tls.Certificate{
-			PrivateKey: certsAndKeys.keys[0],
-			Leaf:       certsAndKeys.certs[0],
-		}
+			tlsCert := tls.Certificate{
+				PrivateKey: certsAndKeys.keys[0],
+				Leaf:       certsAndKeys.certs[0],
+			}
 
-		for _, cert := range certsAndKeys.certs {
-			tlsCert.Certificate = append(tlsCert.Certificate, cert.Raw)
+			for _, cert := range certsAndKeys.certs {
+				tlsCert.Certificate = append(tlsCert.Certificate, cert.Raw)
+			}
+
+			tlsConfig.Certificates = append(tlsConfig.Certificates, tlsCert)
+		} else {
+			tlsConfig = config.GetTLSConfig(&service.flags.ControlMode, nil, service.flags.SkipCertCheck)
 		}
 
 		tlsConfig.MinVersion = tls.VersionTLS12
-		tlsConfig.Certificates = append(tlsConfig.Certificates, tlsCert)
 	}
 
 	service.interfacedWsmanMessage.SetupWsmanClient(lsa.Username, lsa.Password, service.flags.LocalTlsEnforced, log.GetLevel() == log.TraceLevel, tlsConfig)
@@ -101,7 +106,7 @@ func (service *ProvisioningService) Activate() error {
 			log.Info("Status: Device activated in Admin Control Mode")
 		}
 	} else if service.flags.UseCCM {
-		err = service.ActivateCCM()
+		err = service.ActivateCCM(tlsConfig)
 	}
 
 	return err
@@ -215,7 +220,7 @@ func (service *ProvisioningService) ActivateACM(oldWay bool) error {
 	return nil
 }
 
-func (service *ProvisioningService) ActivateCCM() error {
+func (service *ProvisioningService) ActivateCCM(tlsConfig *tls.Config) error {
 	generalSettings, err := service.interfacedWsmanMessage.GetGeneralSettings()
 	if err != nil {
 		return utils.ActivationFailedGeneralSettings
@@ -226,7 +231,45 @@ func (service *ProvisioningService) ActivateCCM() error {
 		return utils.ActivationFailedSetupService
 	}
 
+	// If TLS is enforced, commit changes
+	if service.flags.LocalTlsEnforced {
+		err := service.CCMCommit(tlsConfig)
+
+		if err != nil {
+			return utils.ActivationFailed
+		}
+	}
+
 	log.Info("Status: Device activated in Client Control Mode")
+
+	return nil
+}
+
+func (service *ProvisioningService) CCMCommit(tlsConfig *tls.Config) error {
+	// Setup WSMAN client with the AMT username and password
+	service.interfacedWsmanMessage.SetupWsmanClient(
+		"admin",
+		service.config.Password,
+		service.flags.LocalTlsEnforced,
+		log.GetLevel() == log.TraceLevel,
+		tlsConfig,
+	)
+
+	// commit changes
+	_, err := service.interfacedWsmanMessage.CommitChanges()
+	if err != nil {
+		log.Error("Failed to activate device:", err)
+
+		log.Info("Putting the device back to pre-provisioning mode")
+
+		_, err = service.interfacedWsmanMessage.Unprovision(1)
+
+		if err != nil {
+			log.Error("Status: Unable to deactivate ", err)
+		}
+
+		return utils.ActivationFailed
+	}
 
 	return nil
 }

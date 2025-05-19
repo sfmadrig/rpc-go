@@ -6,6 +6,7 @@
 package local
 
 import (
+	"crypto/tls"
 	"crypto/x509"
 	"testing"
 
@@ -59,9 +60,11 @@ func TestActivateCCM(t *testing.T) {
 	lps.flags.Command = utils.CommandActivate
 	lps.flags.LocalConfig.Password = "P@ssw0rd"
 
+	var tlsConfig *tls.Config = nil
+
 	t.Run("returns ActivationFailed on GetGeneralSettings error", func(t *testing.T) {
 		errMockGeneralSettings = errTestError
-		err := lps.ActivateCCM()
+		err := lps.ActivateCCM(tlsConfig)
 		assert.Error(t, err)
 
 		errMockGeneralSettings = nil
@@ -69,14 +72,20 @@ func TestActivateCCM(t *testing.T) {
 
 	t.Run("returns ActivationFailed on HostBasedSetupService", func(t *testing.T) {
 		errHostBasedSetupService = errTestError
-		err := lps.ActivateCCM()
+		err := lps.ActivateCCM(tlsConfig)
 		assert.Error(t, err)
 
 		errHostBasedSetupService = nil
 	})
 
 	t.Run("returns Success on happy path", func(t *testing.T) {
-		err := lps.ActivateCCM()
+		err := lps.ActivateCCM(tlsConfig)
+		assert.NoError(t, err)
+	})
+
+	t.Run("returns Success on happy path with TLS", func(t *testing.T) {
+		lps.flags.LocalTlsEnforced = true
+		err := lps.ActivateCCM(tlsConfig)
 		assert.NoError(t, err)
 	})
 }
