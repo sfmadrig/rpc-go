@@ -1,3 +1,10 @@
+## [2.47.2](https://github.com/device-management-toolkit/rpc-go/compare/v2.47.1...v2.47.2) (2025-06-09)
+
+
+### Bug Fixes
+
+* add seperate check to skip amt cert verification ([#858](https://github.com/device-management-toolkit/rpc-go/issues/858)) ([d5c65a9](https://github.com/device-management-toolkit/rpc-go/commit/d5c65a90f9be865ced9bb8a66fe8dd9cf4d0d02e))
+
 ## [2.47.1](https://github.com/device-management-toolkit/rpc-go/compare/v2.47.0...v2.47.1) (2025-05-16)
 
 
