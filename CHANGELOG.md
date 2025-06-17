@@ -1,3 +1,10 @@
+## [2.47.3](https://github.com/device-management-toolkit/rpc-go/compare/v2.47.2...v2.47.3) (2025-06-17)
+
+
+### Bug Fixes
+
+* address panic when incorrect URL for RPS ([72cf72e](https://github.com/device-management-toolkit/rpc-go/commit/72cf72e59a3dccf766e2810e0680dca3cbb9c3bd))
+
 ## [2.47.2](https://github.com/device-management-toolkit/rpc-go/compare/v2.47.1...v2.47.2) (2025-06-09)
 
 
