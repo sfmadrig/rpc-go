@@ -13,7 +13,6 @@ import (
 
 	"github.com/device-management-toolkit/rpc-go/v2/internal/amt"
 	"github.com/device-management-toolkit/rpc-go/v2/internal/flags"
-	"github.com/device-management-toolkit/rpc-go/v2/internal/local"
 	"github.com/device-management-toolkit/rpc-go/v2/pkg/utils"
 	log "github.com/sirupsen/logrus"
 )
@@ -98,7 +97,7 @@ func (p Payload) createPayload(dnsSuffix string, hostname string, amtTimeout tim
 		return payload, err
 	}
 
-	payload.Features = local.DecodeAMT(payload.Version, payload.SKU)
+	payload.Features = utils.DecodeAMTFeatures(payload.Version, payload.SKU)
 
 	payload.UUID, err = p.AMT.GetUUID()
 	if err != nil {
