@@ -678,7 +678,7 @@ func (m MockWSMAN) AddPrivateKey(privateKey string) (string, error) {
 
 var errEnableWiFi error = nil
 
-func (m MockWSMAN) EnableWiFi(enableSync bool) error {
+func (m MockWSMAN) EnableWiFi(enableSync bool, enableWiFiSharing bool) error {
 	return errEnableWiFi
 }
 
