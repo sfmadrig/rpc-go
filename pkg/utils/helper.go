@@ -291,7 +291,7 @@ func decodeAMTFeaturesV3to4(skuNum int64) string {
 		result += "AMT"
 	}
 
-	return result
+	return strings.TrimSpace(result)
 }
 
 // decodeAMTFeaturesV5Plus handles AMT version 5.0 and above
@@ -338,5 +338,5 @@ func decodeAMTFeaturesV5Plus(skuNum int64, amtVer float64) string {
 		result += "L3 Mgt Upgrade"
 	}
 
-	return result
+	return strings.TrimSpace(result)
 }
