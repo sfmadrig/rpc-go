@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -222,4 +223,120 @@ func OrderCertsChain(certs []*x509.Certificate) ([]*x509.Certificate, error) {
 	}
 
 	return ordered, nil
+}
+
+// DecodeAMTFeatures decodes AMT features based on version and SKU
+func DecodeAMTFeatures(version, sku string) string {
+	amtVer, err := parseAMTVersion(version)
+	if err != nil {
+		if !strings.Contains(version, ".") {
+			return "Invalid AMT version format"
+		}
+
+		return "Invalid AMT version"
+	}
+
+	skuNum, err := strconv.ParseInt(sku, 0, 64)
+	if err != nil {
+		return "Invalid SKU"
+	}
+
+	switch {
+	case amtVer <= 2.2:
+		return decodeAMTFeaturesV2(skuNum)
+	case amtVer < 5.0:
+		return decodeAMTFeaturesV3to4(skuNum)
+	default:
+		return decodeAMTFeaturesV5Plus(skuNum, amtVer)
+	}
+}
+
+// parseAMTVersion extracts the major version from the AMT version string
+func parseAMTVersion(version string) (float64, error) {
+	amtParts := strings.Split(version, ".")
+	if len(amtParts) <= 1 {
+		return 0, fmt.Errorf("invalid version format")
+	}
+
+	return strconv.ParseFloat(amtParts[0], 64)
+}
+
+// decodeAMTFeaturesV2 handles AMT version 2.2 and below
+func decodeAMTFeaturesV2(skuNum int64) string {
+	switch skuNum {
+	case 0:
+		return "AMT + ASF + iQST"
+	case 1:
+		return "ASF + iQST"
+	case 2:
+		return "iQST"
+	default:
+		return "Unknown"
+	}
+}
+
+// decodeAMTFeaturesV3to4 handles AMT versions 3.0 to 4.x
+func decodeAMTFeaturesV3to4(skuNum int64) string {
+	result := ""
+
+	if skuNum&0x02 > 0 {
+		result += "iQST "
+	}
+
+	if skuNum&0x04 > 0 {
+		result += "ASF "
+	}
+
+	if skuNum&0x08 > 0 {
+		result += "AMT"
+	}
+
+	return strings.TrimSpace(result)
+}
+
+// decodeAMTFeaturesV5Plus handles AMT version 5.0 and above
+func decodeAMTFeaturesV5Plus(skuNum int64, amtVer float64) string {
+	result := ""
+
+	if skuNum&0x02 > 0 && amtVer < 7.0 {
+		result += "iQST "
+	}
+
+	if skuNum&0x04 > 0 && amtVer < 6.0 {
+		result += "ASF "
+	}
+
+	if skuNum&0x08 > 0 {
+		result += "AMT Pro "
+	}
+
+	if skuNum&0x10 > 0 {
+		result += "Intel Standard Manageability "
+	}
+
+	if skuNum&0x20 > 0 && amtVer < 6.0 {
+		result += "TPM "
+	}
+
+	if skuNum&0x100 > 0 && amtVer < 6.0 {
+		result += "Home IT "
+	}
+
+	if skuNum&0x400 > 0 && amtVer < 6.0 {
+		result += "WOX "
+	}
+
+	if skuNum&0x2000 > 0 {
+		result += "AT-p "
+	}
+
+	if skuNum&0x4000 > 0 {
+		result += "Corporate "
+	}
+
+	if skuNum&0x8000 > 0 && amtVer < 8.0 {
+		result += "L3 Mgt Upgrade"
+	}
+
+	return strings.TrimSpace(result)
 }

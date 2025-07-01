@@ -195,7 +195,7 @@ func (service *ProvisioningService) isISMSystem() (bool, error) {
 	}
 
 	dataStruct["sku"] = result
-	result = DecodeAMT(dataStruct["amt"].(string), dataStruct["sku"].(string))
+	result = utils.DecodeAMTFeatures(dataStruct["amt"].(string), dataStruct["sku"].(string))
 
 	dataStruct["features"] = strings.TrimSpace(result)
 	if strings.Contains(dataStruct["features"].(string), "Intel Standard Manageability") {
