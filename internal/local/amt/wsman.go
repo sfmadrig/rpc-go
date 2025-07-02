@@ -67,7 +67,7 @@ type WSMANer interface {
 	// WiFi
 	GetWiFiSettings() ([]wifi.WiFiEndpointSettingsResponse, error)
 	DeleteWiFiSetting(instanceId string) error
-	EnableWiFi(enableSync bool) error
+	EnableWiFi(enableSync bool, enableWiFiSharing bool) error
 	AddWiFiSettings(wifiEndpointSettings wifi.WiFiEndpointSettingsRequest, ieee8021xSettings models.IEEE8021xSettings, wifiEndpoint, clientCredential, caCredential string) (wifiportconfiguration.Response, error)
 	// Wired
 	GetEthernetSettings() ([]ethernetport.SettingsResponse, error)
@@ -355,10 +355,20 @@ func (g *GoWSMANMessages) DeleteKeyPair(instanceID string) error {
 
 	return err
 }
-func (g *GoWSMANMessages) EnableWiFi(enableSync bool) error {
+func (g *GoWSMANMessages) EnableWiFi(enableSync bool, uefiWiFiSync bool) error {
 	response, err := g.wsmanMessages.AMT.WiFiPortConfigurationService.Get()
 	if err != nil {
 		return err
+	}
+
+	bootCapabilities, err := g.wsmanMessages.AMT.BootCapabilities.Get()
+	if err != nil {
+		return err
+	}
+
+	uefiWiFiSyncState := false
+	if bootCapabilities.Body.BootCapabilitiesGetResponse.UEFIWiFiCoExistenceAndProfileShare && uefiWiFiSync {
+		uefiWiFiSyncState = uefiWiFiSync
 	}
 
 	// Determine the sync state based on input parameter
@@ -381,7 +391,7 @@ func (g *GoWSMANMessages) EnableWiFi(enableSync bool) error {
 			LocalProfileSynchronizationEnabled: syncState,
 			LastConnectedSsidUnderMeControl:    response.Body.WiFiPortConfigurationService.LastConnectedSsidUnderMeControl,
 			NoHostCsmeSoftwarePolicy:           response.Body.WiFiPortConfigurationService.NoHostCsmeSoftwarePolicy,
-			UEFIWiFiProfileShareEnabled:        response.Body.WiFiPortConfigurationService.UEFIWiFiProfileShareEnabled,
+			UEFIWiFiProfileShareEnabled:        uefiWiFiSyncState,
 		}
 
 		_, err := g.wsmanMessages.AMT.WiFiPortConfigurationService.Put(putRequest)
