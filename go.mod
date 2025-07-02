@@ -9,7 +9,7 @@ toolchain go1.23.7
 
 require (
 	github.com/alecthomas/kong v1.12.0
-	github.com/device-management-toolkit/go-wsman-messages/v2 v2.26.2
+	github.com/device-management-toolkit/go-wsman-messages/v2 v2.27.0
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/websocket v1.5.3
 	github.com/hirochachacha/go-smb2 v1.1.0
