@@ -61,7 +61,7 @@ func (service *ProvisioningService) AddWifiSettings() (err error) {
 		return utils.WiFiConfigurationFailed
 	}
 
-	err = service.EnableWifiPort(service.flags.LocalConfig.WiFiSyncEnabled)
+	err = service.EnableWifiPort(service.flags.LocalConfig.WiFiSyncEnabled, service.flags.LocalConfig.UEFIWiFiSyncEnabled)
 	if err != nil {
 		return err
 	}

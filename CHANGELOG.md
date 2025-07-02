@@ -1,3 +1,10 @@
+# [2.48.0](https://github.com/device-management-toolkit/rpc-go/compare/v2.47.3...v2.48.0) (2025-07-01)
+
+
+### Features
+
+* adds UEFIWiFiSyncEnabled is added to config for OCR ([bc4855d](https://github.com/device-management-toolkit/rpc-go/commit/bc4855d65af38a800da21afe13d69f5f06f5edfc))
+
 ## [2.47.3](https://github.com/device-management-toolkit/rpc-go/compare/v2.47.2...v2.47.3) (2025-06-17)
 
 

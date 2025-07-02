@@ -129,13 +129,13 @@ func TestEnableWifiErrors(t *testing.T) {
 
 	t.Run("expect success for EnableWifi", func(t *testing.T) {
 		lps := setupService(f)
-		err := lps.EnableWifiPort(false)
+		err := lps.EnableWifiPort(false, false)
 		assert.NoError(t, err)
 	})
 	t.Run("expect failure for EnableWifi", func(t *testing.T) {
 		errEnableWiFi = errTestError
 		lps := setupService(f)
-		err := lps.EnableWifiPort(true)
+		err := lps.EnableWifiPort(true, true)
 		assert.Error(t, err)
 
 		errEnableWiFi = nil
