@@ -1,3 +1,10 @@
+## [2.48.2](https://github.com/device-management-toolkit/rpc-go/compare/v2.48.1...v2.48.2) (2025-07-03)
+
+
+### Bug Fixes
+
+* **deps:** update go-wsman-messages calls to use pointers for PUT ([c276a0d](https://github.com/device-management-toolkit/rpc-go/commit/c276a0d74b864898a123680f23c8c4f381cd2e90))
+
 ## [2.48.1](https://github.com/device-management-toolkit/rpc-go/compare/v2.48.0...v2.48.1) (2025-07-03)
 
 
