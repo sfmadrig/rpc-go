@@ -1,8 +1,6 @@
 module github.com/device-management-toolkit/rpc-go/v2
 
-go 1.23.0
-
-toolchain go1.23.7
+go 1.24.0
 
 // uncomment if developing with go-wsman-messages locally
 // replace github.com/device-management-toolkit/go-wsman-messages/v2 => ../go-wsman-messages
@@ -16,7 +14,7 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.11.1
 	go.uber.org/mock v0.6.0
-	golang.org/x/sys v0.35.0
+	golang.org/x/sys v0.36.0
 )
 
 require (
