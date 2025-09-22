@@ -48,10 +48,6 @@ func runRPC(args []string) error {
 	return err
 }
 
-func fetchProfile(flags *flags.Flags) error {
-	return nil
-}
-
 func parseCommandLine(args []string) (*flags.Flags, error) {
 	// process flags
 	flags := flags.NewFlags(args, utils.PR)

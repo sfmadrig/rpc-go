@@ -45,4 +45,5 @@ type ConfigureCmd struct {
 	Wired          WiredCmd          `cmd:"" aliases:"wired,ethernet,addethernetsettings" help:"Configure wired ethernet settings"`
 	TLS            TLSCmd            `cmd:"" aliases:"tls,configuretls" help:"Configure TLS settings"`
 	Proxy          ProxyCmd          `cmd:"" aliases:"proxy,httpproxy" help:"Configure HTTP proxy access point for firmware-initiated connections"`
+	Hostname       SyncHostnameCmd   `cmd:"" aliases:"synchostname,sethostname" help:"Synchronize host OS hostname and DNS suffix to AMT general settings"`
 }
