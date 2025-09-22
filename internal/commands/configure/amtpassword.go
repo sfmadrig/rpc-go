@@ -8,7 +8,6 @@ package configure
 import (
 	"encoding/base64"
 	"encoding/hex"
-	"errors"
 	"fmt"
 
 	"github.com/device-management-toolkit/go-wsman-messages/v2/pkg/wsman/client"
@@ -57,7 +56,7 @@ func (cmd *AMTPasswordCmd) Run(ctx *commands.Context) error {
 	if controlMode == 0 {
 		log.Error(ErrDeviceNotActivated)
 
-		return errors.New(ErrDeviceNotActivated)
+		return ErrDeviceNotActivated
 	}
 
 	// Get general settings to obtain digest realm

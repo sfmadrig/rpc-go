@@ -6,7 +6,6 @@
 package configure
 
 import (
-	"errors"
 	"fmt"
 	"os"
 
@@ -27,7 +26,7 @@ func (cmd *SyncHostnameCmd) Run(ctx *commands.Context) error {
 	if cmd.GetControlMode() == 0 {
 		log.Error(ErrDeviceNotActivated)
 
-		return errors.New(ErrDeviceNotActivated)
+		return ErrDeviceNotActivated
 	}
 
 	// Retrieve OS hostname and DNS suffix via AMT helpers

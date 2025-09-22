@@ -65,7 +65,7 @@ type AmtInfoCmd struct {
 
 	// Sync to server flags
 	Sync bool   `help:"Sync device info to remote server via HTTP PATCH"`
-	URL  string `help:"Base URL of the server (e.g., https://mps.example.com)" name:"url"`
+	URL  string `help:"Endpoint URL of the devices API (e.g., https://mps.example.com/api/v1/devices)" name:"url"`
 
 	// Shared server authentication flags (Bearer token or Basic auth)
 	ServerAuthFlags
@@ -231,9 +231,11 @@ type syncDeviceInfo struct {
 	LastUpdated time.Time `json:"lastUpdated"`
 }
 
-// SyncDeviceInfo sends a PATCH to {baseURL}/api/v1/devices with the device info payload
-func (s *InfoService) SyncDeviceInfo(ctx *Context, result *InfoResult, baseURL string, auth *ServerAuthFlags) error {
-	endpoint := baseURL
+// SyncDeviceInfo sends a PATCH to the provided endpoint URL with the device info payload
+// The urlArg is expected to be a full URL to the devices endpoint (e.g., https://mps.example.com/api/v1/devices)
+func (s *InfoService) SyncDeviceInfo(ctx *Context, result *InfoResult, urlArg string, auth *ServerAuthFlags) error {
+	// Use the provided URL directly as the target endpoint
+	endpoint := urlArg
 
 	payload := syncPayload{
 		GUID: result.UUID,
@@ -273,7 +275,15 @@ func (s *InfoService) SyncDeviceInfo(ctx *Context, result *InfoResult, baseURL s
 	if auth != nil {
 		token := strings.TrimSpace(auth.AuthToken)
 		if token == "" && auth.AuthUsername != "" && auth.AuthPassword != "" {
-			t, aerr := profilefetcher.Authenticate(baseURL, auth.AuthUsername, auth.AuthPassword, auth.AuthEndpoint, ctx.SkipCertCheck, 10*time.Second)
+			// Derive the base (scheme://host) from the target endpoint for default auth endpoints
+			parsed, perr := neturl.Parse(endpoint)
+			if perr != nil {
+				return fmt.Errorf("invalid endpoint url: %w", perr)
+			}
+
+			base := fmt.Sprintf("%s://%s", parsed.Scheme, parsed.Host)
+
+			t, aerr := profilefetcher.Authenticate(base, auth.AuthUsername, auth.AuthPassword, auth.AuthEndpoint, ctx.SkipCertCheck, 10*time.Second)
 			if aerr != nil {
 				return fmt.Errorf("authentication failed: %w", aerr)
 			}
@@ -326,20 +336,7 @@ func bestIPAddress(res *InfoResult) string {
 }
 
 // joinURL safely concatenates base URL and path
-func joinURL(base, path string) (string, error) {
-	u, err := neturl.Parse(base)
-	if err != nil {
-		return "", err
-	}
-	// Ensure path joins correctly
-	if !strings.HasPrefix(path, "/") {
-		path = "/" + path
-	}
-
-	u.Path = strings.TrimRight(u.Path, "/") + path
-
-	return u.String(), nil
-}
+// (previously had joinURL helper; no longer needed as endpoints are provided in full)
 
 // GetAMTInfo retrieves AMT information based on the command flags
 func (s *InfoService) GetAMTInfo(cmd *AmtInfoCmd) (*InfoResult, error) {

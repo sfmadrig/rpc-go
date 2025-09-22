@@ -39,11 +39,8 @@ func (e *CLIExecutor) Execute(args []string) error {
 	ctx := context.Background()
 
 	cmd := exec.CommandContext(ctx, executable, args...)
-
 	cmd.Stdout = os.Stdout
-
 	cmd.Stderr = os.Stderr
-
 	cmd.Stdin = os.Stdin
 
 	// Run the command

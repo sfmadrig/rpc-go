@@ -73,7 +73,7 @@ func (cmd *CIRACmd) Run(ctx *commands.Context) error {
 	if controlMode == 0 {
 		log.Error(ErrDeviceNotActivated)
 
-		return errors.New(ErrDeviceNotActivated)
+		return ErrDeviceNotActivated
 	}
 
 	// Clear existing CIRA configuration
