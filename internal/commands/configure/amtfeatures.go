@@ -6,7 +6,6 @@
 package configure
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
@@ -53,7 +52,7 @@ func (cmd *AMTFeaturesCmd) Run(ctx *commands.Context) error {
 	if cmd.GetControlMode() == 0 {
 		log.Error(ErrDeviceNotActivated)
 
-		return errors.New(ErrDeviceNotActivated)
+		return ErrDeviceNotActivated
 	}
 
 	// Determine the redirection state

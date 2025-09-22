@@ -6,7 +6,6 @@
 package configure
 
 import (
-	"errors"
 	"fmt"
 	"net"
 	"strings"
@@ -89,7 +88,7 @@ func (cmd *ProxyCmd) Run(ctx *commands.Context) error {
 	if cmd.GetControlMode() == 0 {
 		log.Error(ErrDeviceNotActivated)
 
-		return errors.New(ErrDeviceNotActivated)
+		return ErrDeviceNotActivated
 	}
 
 	// Handle listing proxy settings

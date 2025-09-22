@@ -198,6 +198,22 @@ func (f *ProfileFetcher) fetchData(u, token string) ([]byte, error) {
 	return io.ReadAll(resp.Body)
 }
 
+// Authenticate exchanges a username/password for a bearer token using the same logic as ProfileFetcher
+// baseURL should be the scheme+host of the target (e.g., https://console.example.com)
+// If authEndpoint is empty, this function will try known defaults.
+func Authenticate(baseURL, username, password, authEndpoint string, skipCertCheck bool, timeout time.Duration) (string, error) {
+	pf := &ProfileFetcher{
+		URL:           baseURL,
+		Username:      username,
+		Password:      password,
+		AuthEndpoint:  authEndpoint,
+		SkipCertCheck: skipCertCheck,
+		Timeout:       timeout,
+	}
+
+	return pf.authenticate()
+}
+
 func (f *ProfileFetcher) parseProfile(data []byte) (config.Configuration, error) {
 	var cfg config.Configuration
 

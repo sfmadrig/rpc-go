@@ -188,6 +188,7 @@ func ExecuteWithAMT(args []string, amtCommand amt.Interface) error {
 		JsonOutput:    cli.JsonOutput,
 		Verbose:       cli.Verbose,
 		SkipCertCheck: cli.SkipCertCheck,
+		Extra:         map[string]any{},
 	}
 
 	// Execute the selected command

@@ -12,8 +12,8 @@ import (
 
 	"github.com/device-management-toolkit/go-wsman-messages/v2/pkg/security"
 	"github.com/device-management-toolkit/rpc-go/v2/internal/commands"
-	internalconfig "github.com/device-management-toolkit/rpc-go/v2/internal/config"
 	"github.com/device-management-toolkit/rpc-go/v2/internal/orchestrator"
+	"github.com/device-management-toolkit/rpc-go/v2/internal/profile"
 	"github.com/device-management-toolkit/rpc-go/v2/internal/profilefetcher"
 	log "github.com/sirupsen/logrus"
 )
@@ -31,11 +31,7 @@ type ActivateCmd struct {
 	Profile string `help:"Profile name to use for legacy remote activation (wss/ws). For local/HTTP profiles, pass a file path instead." name:"profile"`
 	Proxy   string `help:"Proxy server URL for RPS connection (legacy remote)" name:"proxy"`
 
-	// HTTP profile fetch auth (non-legacy http/https URL). Avoids collision with AMT --password.
-	AuthToken    string `help:"Bearer token for HTTP profile fetch" name:"auth-token" env:"PROFILE_TOKEN"`
-	AuthUsername string `help:"Username for HTTP profile fetch" name:"auth-username" env:"PROFILE_USERNAME"`
-	AuthPassword string `help:"Password for HTTP profile fetch" name:"auth-password" env:"PROFILE_PASSWORD"`
-	AuthEndpoint string `help:"The endpoint to call to fetch a token. Assumes the same host as the profile URL unless an absolute URL is provided; defaults to the Console path /api/v1/authorize." name:"auth-endpoint" default:"/api/v1/authorize"`
+	// HTTP profile fetch auth flags are provided via embedded ServerAuthFlags (includes auth-endpoint)
 
 	// Optional decryption key for local or HTTP-delivered encrypted profile content
 	Key string `help:"32 byte key to decrypt profile (local file or raw HTTP body)" short:"k" name:"key" env:"CONFIG_ENCRYPTION_KEY"`
@@ -55,6 +51,9 @@ type ActivateCmd struct {
 	ProvisioningCertPwd string `help:"Provisioning certificate password" env:"PROVISIONING_CERT_PASSWORD" name:"provisioningCertPwd"`
 	SkipIPRenew         bool   `help:"Skip DHCP renewal of IP address if AMT becomes enabled" name:"skipIPRenew"`
 	StopConfig          bool   `help:"Transition AMT from in-provisioning to pre-provisioning state" name:"stopConfig"`
+
+	// Shared server authentication flags for remote flows (optional)
+	commands.ServerAuthFlags
 }
 
 // RequiresAMTPassword indicates whether this command requires AMT password
@@ -223,13 +222,14 @@ func (cmd *ActivateCmd) Run(ctx *commands.Context) error {
 func (cmd *ActivateCmd) runRemoteActivation(ctx *commands.Context) error {
 	// Create remote activation command with current flags
 	remoteCmd := RemoteActivateCmd{
-		URL:          cmd.URL,
-		Profile:      cmd.Profile,
-		DNS:          cmd.DNS,
-		Hostname:     cmd.Hostname,
-		UUID:         cmd.UUID,
-		FriendlyName: cmd.FriendlyName,
-		Proxy:        cmd.Proxy,
+		URL:             cmd.URL,
+		Profile:         cmd.Profile,
+		DNS:             cmd.DNS,
+		Hostname:        cmd.Hostname,
+		UUID:            cmd.UUID,
+		FriendlyName:    cmd.FriendlyName,
+		Proxy:           cmd.Proxy,
+		ServerAuthFlags: cmd.ServerAuthFlags,
 	}
 
 	// Validate and execute the remote command
@@ -275,7 +275,7 @@ func (cmd *ActivateCmd) runHttpProfileFullflow(ctx *commands.Context) error {
 func (cmd *ActivateCmd) runLocalProfileFullflow() error {
 	// Prefer existing loader for plaintext YAML
 	if cmd.Key == "" {
-		c, err := internalconfig.LoadConfig(cmd.Profile)
+		c, err := profile.LoadProfile(cmd.Profile)
 		if err != nil {
 			return fmt.Errorf("failed to load profile: %w", err)
 		}

@@ -37,6 +37,7 @@ func (e *CLIExecutor) Execute(args []string) error {
 	// Using context.Background() here because the existing interface does not yet expose a context;
 	// if/when a higher-level context is added we can thread it through without further linter changes.
 	ctx := context.Background()
+
 	cmd := exec.CommandContext(ctx, executable, args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
