@@ -1,3 +1,11 @@
+## [2.48.3](https://github.com/device-management-toolkit/rpc-go/compare/v2.48.2...v2.48.3) (2025-10-13)
+
+
+### Bug Fixes
+
+* address panic when operationalState is requested ([#985](https://github.com/device-management-toolkit/rpc-go/issues/985)) ([b16ac56](https://github.com/device-management-toolkit/rpc-go/commit/b16ac56c1ab81970df9926212caa99dd60a8e2e6)), closes [#978](https://github.com/device-management-toolkit/rpc-go/issues/978)
+* **dockerfile:** license comment now correct ([74d13b3](https://github.com/device-management-toolkit/rpc-go/commit/74d13b31d491909da14e00d281cb8d2e52d57c42))
+
 ## [2.48.2](https://github.com/device-management-toolkit/rpc-go/compare/v2.48.1...v2.48.2) (2025-07-03)
 
 
