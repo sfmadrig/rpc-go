@@ -1,8 +1,11 @@
 {
   "branches": [
     "main",
-    "2.x",
-    "2.x.x"
+    {
+      "name": "2.x.x",
+      "range": "2.48.x",
+      "channel": "2.48.x"
+    }
   ],
   "plugins": [
     [
