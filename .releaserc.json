@@ -1,0 +1,62 @@
+{
+  "branches": [
+    "main",
+    "2.x",
+    "2.0.x"
+  ],
+  "plugins": [
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "releaseRules": [
+          {
+            "type": "chore",
+            "release": "patch"
+          }
+        ]
+      }
+    ],
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/changelog",
+    [
+      "@semantic-release/github",
+      {
+        "assets": [
+          {
+            "path": "rpc_linux_x64.tar.gz",
+            "label": "Linux x64 RPC Executable"
+          },
+          {
+            "path": "rpc_linux_x86.tar.gz",
+            "label": "Linux x86 RPC Executable"
+          },
+          {
+            "path": "rpc_windows_x64.exe",
+            "label": "Windows x64 RPC Executable"
+          },
+          {
+            "path": "rpc_windows_x86.exe",
+            "label": "Windows x86 RPC Executable"
+          },
+          {
+            "path": "rpc_so_x64.tar.gz",
+            "label": "Linux x64 RPC Library"
+          },
+          {
+            "path": "licenses.zip",
+            "label": "Third-party Licenses"
+          }
+        ]
+      }
+    ],
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "./build.sh ${nextRelease.version} && docker build -t vprodemo.azurecr.io/rpc-go:v${nextRelease.version} -t vprodemo.azurecr.io/rpc-go:latest -t docker.io/intel/oact-rpc-go:v${nextRelease.version} -t docker.io/intel/oact-rpc-go:latest -t docker.io/intel/device-mgmt-toolkit-rpc-go:v${nextRelease.version} -t docker.io/intel/device-mgmt-toolkit-rpc-go:latest .",
+        "publishCmd": "docker push vprodemo.azurecr.io/rpc-go:v${nextRelease.version} && docker push vprodemo.azurecr.io/rpc-go:latest && docker push docker.io/intel/oact-rpc-go:v${nextRelease.version} && docker push docker.io/intel/oact-rpc-go:latest && docker push docker.io/intel/device-mgmt-toolkit-rpc-go:v${nextRelease.version} && docker push docker.io/intel/device-mgmt-toolkit-rpc-go:latest",
+        "verifyReleaseCmd": "echo v${nextRelease.version} > .nextVersion"
+      }
+    ],
+    "@semantic-release/git"
+  ]
+}

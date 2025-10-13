@@ -1,0 +1,47 @@
+name: Trivy Container Scan
+
+on:
+  push:
+    branches: [main, 2.x, 2.0.x]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [main, 2.x, 2.0.x]
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@6c439dc8bdf85cadbbce9ed30d1c7b959517bc49 # v2.12.2
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Build the Docker image
+
+        run: docker build . --file Dockerfile --tag vprodemo.azurecr.io/rpc-go:${{ github.sha }} --tag vprodemo.azurecr.io/rpc-go:latest
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@76071ef0d7ec797419534a183b498b4d6366cf37 # master
+        with:
+          image-ref: "vprodemo.azurecr.io/rpc-go:${{ github.sha }}"
+          format: "sarif"
+          output: "rpcgo-trivy-results.sarif"
+          exit-code: "1"
+          ignore-unfixed: true
+          vuln-type: "os,library"
+          severity: "UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL"
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@181d5eefc20863364f96762470ba6f862bdef56b # v3.29.2
+        if: always()
+        with:
+          sarif_file: "rpcgo-trivy-results.sarif"
+      - name: Upload Trivy Artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        if: always()
+        with:
+          name: rpcgo-trivy-results.sarif
+          path: rpcgo-trivy-results.sarif
