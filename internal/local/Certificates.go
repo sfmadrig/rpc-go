@@ -48,7 +48,9 @@ func (service *ProvisioningService) PruneCerts() error {
 
 	for i := range getCertificateResponse.Certificates.([]publickey.RefinedPublicKeyCertificateResponse) {
 		cert := getCertificateResponse.Certificates.([]publickey.RefinedPublicKeyCertificateResponse)[i]
-		if cert.AssociatedProfiles == nil {
+		isMPSRootCert := strings.Contains(cert.Subject, "CN=MPSRoot")
+
+		if cert.AssociatedProfiles == nil && !isMPSRootCert {
 			err := service.interfacedWsmanMessage.DeletePublicCert(cert.InstanceID)
 			if err != nil {
 				log.Debugf("unable to delete: %s %s", cert.InstanceID, err)
