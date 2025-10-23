@@ -1,3 +1,10 @@
+## [2.48.5](https://github.com/device-management-toolkit/rpc-go/compare/v2.48.4...v2.48.5) (2025-10-23)
+
+
+### Bug Fixes
+
+* cert cleanup now excludes mpsroot cert ([9e98143](https://github.com/device-management-toolkit/rpc-go/commit/9e981433d1d67397230959063639bb070ad06d27))
+
 ## [2.48.4](https://github.com/device-management-toolkit/rpc-go/compare/v2.48.3...v2.48.4) (2025-10-13)
 
 ## [2.48.3](https://github.com/device-management-toolkit/rpc-go/compare/v2.48.2...v2.48.3) (2025-10-13)
