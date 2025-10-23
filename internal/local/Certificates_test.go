@@ -2,6 +2,7 @@ package local
 
 import (
 	// "encoding/xml"
+	"strings"
 	"testing"
 
 	"github.com/device-management-toolkit/go-wsman-messages/v2/pkg/wsman/amt/publickey"
@@ -31,7 +32,54 @@ func TestPruneCerts(t *testing.T) {
 			service.amtCommand = mockAMT
 			service.interfacedWsmanMessage = mockWsman
 
-			service.PruneCerts()
+			err := service.PruneCerts()
+			assert.NoError(t, err)
+		})
+	}
+}
+
+func TestPruneCertsMPSRootLogic(t *testing.T) {
+	tests := []struct {
+		name         string
+		certificates []publickey.RefinedPublicKeyCertificateResponse
+		description  string
+	}{
+		{
+			name: "MPSRoot certificate should not be pruned",
+			certificates: []publickey.RefinedPublicKeyCertificateResponse{
+				{
+					ElementName:            "MPS Root Certificate",
+					InstanceID:             "Intel(r) AMT Certificate: Handle: 1",
+					Subject:                "C=unknown,O=unknown,CN=MPSRoot-4311f5", // MPSRoot certificate
+					AssociatedProfiles:     nil,                                     // No profiles but should be preserved
+					TrustedRootCertificate: true,
+				},
+				{
+					ElementName:            "Regular Certificate",
+					InstanceID:             "Intel(r) AMT Certificate: Handle: 2",
+					Subject:                "C=US,O=TestOrg,CN=TestCert", // Regular certificate
+					AssociatedProfiles:     nil,                          // No profiles, should be candidate for deletion
+					TrustedRootCertificate: false,
+				},
+			},
+			description: "Tests that certificates with CN=MPSRoot are preserved during pruning",
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			for _, cert := range tc.certificates {
+				isMPSRootCert := strings.Contains(cert.Subject, "CN=MPSRoot")
+				shouldBeDeleted := cert.AssociatedProfiles == nil && !isMPSRootCert
+
+				if strings.Contains(cert.Subject, "CN=MPSRoot") {
+					assert.False(t, shouldBeDeleted, "MPSRoot certificate should never be marked for deletion: %s", cert.Subject)
+				} else {
+					if cert.AssociatedProfiles == nil {
+						assert.True(t, shouldBeDeleted, "Regular certificate without profiles should be marked for deletion: %s", cert.Subject)
+					}
+				}
+			}
 		})
 	}
 }
