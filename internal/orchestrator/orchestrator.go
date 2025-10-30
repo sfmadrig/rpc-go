@@ -410,8 +410,8 @@ func (po *ProfileOrchestrator) executeEnableWiFi() error {
 	args = append(args, "configure", "wifisync")
 
 	// Pass through explicit values from the strongly-typed profile
-	args = append(args, "--oswifisync", strconv.FormatBool(po.profile.Configuration.Network.Wireless.WiFiSyncEnabled))
-	args = append(args, "--uefiwifisync", strconv.FormatBool(po.profile.Configuration.Network.Wireless.UEFIWiFiSyncEnabled))
+	args = append(args, "--oswifisync="+strconv.FormatBool(po.profile.Configuration.Network.Wireless.WiFiSyncEnabled))
+	args = append(args, "--uefiwifisync="+strconv.FormatBool(po.profile.Configuration.Network.Wireless.UEFIWiFiSyncEnabled))
 
 	return po.executeWithPasswordFallback(args)
 }
