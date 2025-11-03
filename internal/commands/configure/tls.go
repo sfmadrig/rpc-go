@@ -207,6 +207,14 @@ func (cmd *TLSCmd) Run(ctx *commands.Context) error {
 		}
 	}
 
+	// Update TLS credential context if certificates were provisioned
+	if tlsMode != TLSModeDisabled && handles.ClientCertHandle != "" {
+		err = cmd.updateTLSCredentialContext(handles.ClientCertHandle)
+		if err != nil {
+			return fmt.Errorf("failed to update TLS credential context: %w", err)
+		}
+	}
+
 	// Synchronize time
 	err = cmd.synchronizeTime(ctx)
 	if err != nil {
@@ -219,14 +227,6 @@ func (cmd *TLSCmd) Run(ctx *commands.Context) error {
 		log.Error("Failed to configure TLS")
 
 		return fmt.Errorf("TLS configuration failed: %w", err)
-	}
-
-	// Update TLS credential context if certificates were provisioned
-	if tlsMode != TLSModeDisabled && handles.ClientCertHandle != "" {
-		err = cmd.updateTLSCredentialContext(handles.ClientCertHandle)
-		if err != nil {
-			return fmt.Errorf("failed to update TLS credential context: %w", err)
-		}
 	}
 
 	// Apply delay after configuration
