@@ -1,3 +1,10 @@
+## [2.48.6](https://github.com/device-management-toolkit/rpc-go/compare/v2.48.5...v2.48.6) (2025-11-04)
+
+
+### Bug Fixes
+
+* add -n to all the configure subcommands ([c5a4232](https://github.com/device-management-toolkit/rpc-go/commit/c5a423297f89c481e9c9e16c77aea9f27611a696))
+
 ## [2.48.5](https://github.com/device-management-toolkit/rpc-go/compare/v2.48.4...v2.48.5) (2025-10-23)
 
 
