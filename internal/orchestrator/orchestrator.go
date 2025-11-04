@@ -77,9 +77,9 @@ func (po *ProfileOrchestrator) ExecuteProfile() error {
 	// Step 1: Activation or upgrade if needed
 	if po.profile.Configuration.AMTSpecific.ControlMode == ACMMODE && currentControlMode == 1 {
 		// Upgrade CCM -> ACM using local activation path with provisioning cert
-		log.Info("Device in CCM and profile requests ACM; upgrade to ACM not supported yet. Please deactivate first and try again.")
-
-		return fmt.Errorf("ACM upgrade failed")
+		if err := po.executeActivation(); err != nil {
+			return fmt.Errorf("activation failed: %w", err)
+		}
 	} else if currentControlMode == 0 {
 		if err := po.executeActivation(); err != nil {
 			return fmt.Errorf("activation failed: %w", err)
@@ -410,8 +410,8 @@ func (po *ProfileOrchestrator) executeEnableWiFi() error {
 	args = append(args, "configure", "wifisync")
 
 	// Pass through explicit values from the strongly-typed profile
-	args = append(args, "--oswifisync", strconv.FormatBool(po.profile.Configuration.Network.Wireless.WiFiSyncEnabled))
-	args = append(args, "--uefiwifisync", strconv.FormatBool(po.profile.Configuration.Network.Wireless.UEFIWiFiSyncEnabled))
+	args = append(args, "--oswifisync="+strconv.FormatBool(po.profile.Configuration.Network.Wireless.WiFiSyncEnabled))
+	args = append(args, "--uefiwifisync="+strconv.FormatBool(po.profile.Configuration.Network.Wireless.UEFIWiFiSyncEnabled))
 
 	return po.executeWithPasswordFallback(args)
 }
