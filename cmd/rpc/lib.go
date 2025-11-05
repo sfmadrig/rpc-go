@@ -17,6 +17,7 @@ import (
 	"strings"
 
 	"github.com/device-management-toolkit/rpc-go/v2/internal/cli"
+	"github.com/device-management-toolkit/rpc-go/v2/pkg/amt"
 	"github.com/device-management-toolkit/rpc-go/v2/pkg/utils"
 	log "github.com/sirupsen/logrus"
 )
@@ -38,10 +39,12 @@ func rpcExec(Input *C.char, Output **C.char) int {
 	rd, w, _ := os.Pipe()
 	os.Stdout = w
 
-	if accessStatus := rpcCheckAccess(); accessStatus != int(utils.Success) {
+	amtCommand := amt.NewAMTCommand()
+	err := amtCommand.Initialize()
+	if err != nil {
 		*Output = C.CString(AccessErrMsg)
 
-		return accessStatus
+		return handleError(err)
 	}
 
 	// create argument array from input string
@@ -60,7 +63,7 @@ func rpcExec(Input *C.char, Output **C.char) int {
 	args = append([]string{"rpc"}, args...)
 
 	// Use Kong-based CLI execution path
-	err = cli.Execute(args)
+	err = cli.ExecuteWithAMT(args, amtCommand)
 	if err != nil {
 		*Output = C.CString("rpcExec failed: " + inputString)
 
@@ -88,6 +91,11 @@ func handleError(err error) int {
 		return customErr.Code
 	} else {
 		log.Error(err.Error())
+
+		errorMsg := err.Error()
+		if strings.Contains(errorMsg, "unexpected argument") {
+			return utils.InvalidParameterCombination.Code
+		}
 
 		return utils.GenericFailure.Code
 	}
