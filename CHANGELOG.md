@@ -1,3 +1,10 @@
+## [2.48.8](https://github.com/device-management-toolkit/rpc-go/compare/v2.48.7...v2.48.8) (2025-11-18)
+
+
+### Bug Fixes
+
+* --local issue with wired 8021x configure failing ([f9c0a7a](https://github.com/device-management-toolkit/rpc-go/commit/f9c0a7a1c72e1afe24f9bf0ae609a05278967b78))
+
 ## [2.48.7](https://github.com/device-management-toolkit/rpc-go/compare/v2.48.6...v2.48.7) (2025-11-06)
 
 ## [2.48.6](https://github.com/device-management-toolkit/rpc-go/compare/v2.48.5...v2.48.6) (2025-11-04)
