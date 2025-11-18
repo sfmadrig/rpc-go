@@ -73,7 +73,7 @@ type WSMANer interface {
 	GetEthernetSettings() ([]ethernetport.SettingsResponse, error)
 	PutEthernetSettings(ethernetPortSettings ethernetport.SettingsRequest, instanceId string) (ethernetport.Response, error)
 	GetIPSIEEE8021xSettings() (response ieee8021x.Response, err error)
-	PutIPSIEEE8021xSettings(ieee8021xSettings ieee8021x.IEEE8021xSettingsRequest) (response ieee8021x.Response, err error)
+	PutIPSIEEE8021xSettings(ieee8021xSettings *ieee8021x.IEEE8021xSettingsRequest) (response ieee8021x.Response, err error)
 	SetIPSIEEE8021xCertificates(serverCertificateIssuer, clientCertificate string) (response ieee8021x.Response, err error)
 	// TLS
 	CreateTLSCredentialContext(certHandle string) (response tls.Response, err error)
@@ -459,7 +459,7 @@ func (g *GoWSMANMessages) GetIPSIEEE8021xSettings() (response ieee8021x.Response
 	return g.wsmanMessages.IPS.IEEE8021xSettings.Get()
 }
 
-func (g *GoWSMANMessages) PutIPSIEEE8021xSettings(ieee8021xSettings ieee8021x.IEEE8021xSettingsRequest) (response ieee8021x.Response, err error) {
+func (g *GoWSMANMessages) PutIPSIEEE8021xSettings(ieee8021xSettings *ieee8021x.IEEE8021xSettingsRequest) (response ieee8021x.Response, err error) {
 	return g.wsmanMessages.IPS.IEEE8021xSettings.Put(ieee8021xSettings)
 }
 

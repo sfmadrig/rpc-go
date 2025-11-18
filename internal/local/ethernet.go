@@ -112,7 +112,7 @@ func (service *ProvisioningService) Disable8021xProfile() (err error) {
 
 	// Enabled(2) , Disabled(3), Enabled without certificates(6)
 	if response.Body.IEEE8021xSettingsResponse.Enabled != 3 {
-		request := ieee8021x.IEEE8021xSettingsRequest{
+		request := &ieee8021x.IEEE8021xSettingsRequest{
 			ElementName: response.Body.IEEE8021xSettingsResponse.ElementName,
 			InstanceID:  response.Body.IEEE8021xSettingsResponse.InstanceID,
 			Enabled:     3,
@@ -366,7 +366,7 @@ func (service *ProvisioningService) PutIEEESettings(getIEEESettings ieee8021x.Re
 	enabled := 2
 	pxeTimeout := 120
 
-	request := ieee8021x.IEEE8021xSettingsRequest{
+	request := &ieee8021x.IEEE8021xSettingsRequest{
 		AvailableInS0:          true,
 		ElementName:            getIEEESettings.Body.IEEE8021xSettingsResponse.ElementName,
 		Enabled:                enabled,
