@@ -112,7 +112,7 @@ var (
 	mockPutIPSIEEE8021xResponse ieee8021x.Response
 )
 
-func (m MockWSMAN) PutIPSIEEE8021xSettings(ieee8021xSettings ieee8021x.IEEE8021xSettingsRequest) (response ieee8021x.Response, err error) {
+func (m MockWSMAN) PutIPSIEEE8021xSettings(ieee8021xSettings *ieee8021x.IEEE8021xSettingsRequest) (response ieee8021x.Response, err error) {
 	return mockPutIPSIEEE8021xResponse, mockPutIPSIEEE8021xError
 }
 
