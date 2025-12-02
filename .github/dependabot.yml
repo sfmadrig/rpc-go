@@ -9,18 +9,46 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
+    target-branch: "main"
+
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    target-branch: "2.x.x"
 
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: daily
+    target-branch: "main"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily
+    target-branch: "2.x.x"
 
   - package-ecosystem: docker
     directory: /
     schedule:
       interval: daily
+    target-branch: "main"
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: daily
+    target-branch: "2.x.x"
 
   - package-ecosystem: nuget
     directory: /samples/dotnet
     schedule:
       interval: daily
+    target-branch: "main"
+
+  - package-ecosystem: nuget
+    directory: /samples/dotnet
+    schedule:
+      interval: daily
+    target-branch: "2.x.x"
