@@ -31,15 +31,36 @@ func rpcCheckAccess() int {
 }
 
 //export rpcExec
-func rpcExec(Input *C.char, Output **C.char) int {
+func rpcExec(Input *C.char, Output **C.char, ErrOutput **C.char) int {
 	// Save the current stdout and redirect temporarily
 	oldStdout := os.Stdout
-	rd, w, _ := os.Pipe()
-	os.Stdout = w
+	outR, outW, _ := os.Pipe()
+	os.Stdout = outW
+
+	// Save the current stderr and redirect temporarily
+	oldStderr := os.Stderr
+	errR, errW, _ := os.Pipe()
+	os.Stderr = errW
+
+	captureAndRestoreStdout := func() {
+		outW.Close()
+		var outBuf bytes.Buffer
+		io.Copy(&outBuf, outR)
+		os.Stdout = oldStdout
+		*Output = C.CString(outBuf.String())
+	}
+
+	captureAndRestoreStderr := func() {
+		errW.Close()
+		var errBuf bytes.Buffer
+		io.Copy(&errBuf, errR)
+		os.Stderr = oldStderr
+		*ErrOutput = C.CString(errBuf.String())
+	}
 
 	if accessStatus := rpcCheckAccess(); accessStatus != int(utils.Success) {
-		*Output = C.CString(AccessErrMsg)
-
+		log.Error(AccessErrMsg)
+		captureAndRestoreStderr()
 		return accessStatus
 	}
 
@@ -52,7 +73,7 @@ func rpcExec(Input *C.char, Output **C.char) int {
 	args, err := r.Read()
 	if err != nil {
 		log.Error(err.Error())
-
+		captureAndRestoreStderr()
 		return utils.InvalidParameterCombination.Code
 	}
 
@@ -60,21 +81,16 @@ func rpcExec(Input *C.char, Output **C.char) int {
 
 	err = runRPC(args)
 	if err != nil {
-		*Output = C.CString("rpcExec failed: " + inputString)
+		log.Error("rpcExec failed: " + inputString)
+		errCode := handleError(err)
+		captureAndRestoreStderr()
 
-		return handleError(err)
+		return errCode
 	}
 
 	// Save captured output to Output variable and restore stdout
-	w.Close()
-
-	var buf bytes.Buffer
-
-	io.Copy(&buf, rd)
-
-	os.Stdout = oldStdout
-
-	*Output = C.CString(buf.String())
+	captureAndRestoreStdout()
+	captureAndRestoreStderr()
 
 	return int(utils.Success)
 }
