@@ -35,7 +35,7 @@ func rpcExec(Input *C.char, Output **C.char) int {
 
 	defer func() {
 		if r := recover(); r != nil {
-			log.Printf("Recovered panic: %v", r)
+			println("Recovered panic: %v", r)
 		}
 	}()
 
