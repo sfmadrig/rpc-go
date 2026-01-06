@@ -1,3 +1,10 @@
+## [2.48.13](https://github.com/device-management-toolkit/rpc-go/compare/v2.48.12...v2.48.13) (2026-01-06)
+
+
+### Bug Fixes
+
+* capturing stdout and stderr to output variable ([b6dc09e](https://github.com/device-management-toolkit/rpc-go/commit/b6dc09ebb1c6aadf8a708602d382ce9189747a11))
+
 ## [2.48.12](https://github.com/device-management-toolkit/rpc-go/compare/v2.48.11...v2.48.12) (2026-01-06)
 
 
