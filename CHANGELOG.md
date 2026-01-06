@@ -1,3 +1,10 @@
+## [2.48.12](https://github.com/device-management-toolkit/rpc-go/compare/v2.48.11...v2.48.12) (2026-01-06)
+
+
+### Bug Fixes
+
+* apply SkipAmtCertCheck flag to all TLS configurations ([#1080](https://github.com/device-management-toolkit/rpc-go/issues/1080)) ([eb056e7](https://github.com/device-management-toolkit/rpc-go/commit/eb056e7ecc46aaf67e620abfeccedebc5ee92bf7)), closes [#1068](https://github.com/device-management-toolkit/rpc-go/issues/1068)
+
 ## [2.48.11](https://github.com/device-management-toolkit/rpc-go/compare/v2.48.10...v2.48.11) (2026-01-05)
 
 
